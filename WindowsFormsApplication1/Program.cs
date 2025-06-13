@@ -13,8 +13,8 @@ namespace WindowsFormsApplication1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FirstPanel());
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(ExceptionHandler);
+            Application.Run(new FirstPanel());
         }
 
         static void ExceptionHandler(object sender, UnhandledExceptionEventArgs e)
