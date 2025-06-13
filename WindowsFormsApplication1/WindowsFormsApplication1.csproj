@@ -68,10 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\Backgrounds.cs" />
-    <Compile Include="Enums\ButtonsPattern.cs" />
+    <Compile Include="Enums\CardsPattern.cs" />
     <Compile Include="Enums\FactionType.cs" />
     <Compile Include="Enums\MatchingState.cs" />
-    <Compile Include="Forms\Buttons\MatchingButton.cs">
+    <Compile Include="Forms\Buttons\MatchingCard.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Forms\Panels\FirstPanel.cs">
@@ -95,9 +95,9 @@
     <Compile Include="Forms\Dialogs\NextLevelRevealDialog.Designer.cs">
       <DependentUpon>NextLevelRevealDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Functions\MatchingButtonFunctions\MatchingButtonControllerFunctions.cs" />
+    <Compile Include="Functions\CardFunctions\CardControllerFunctions.cs" />
     <Compile Include="Functions\Units\UnitDictionary.cs" />
-    <Compile Include="Models\Controllers\MatchingButtonController.cs" />
+    <Compile Include="Models\Controllers\CardController.cs" />
     <Compile Include="Models\Units\Unit.cs" />
     <Compile Include="PowerSkill.cs">
       <SubType>Form</SubType>

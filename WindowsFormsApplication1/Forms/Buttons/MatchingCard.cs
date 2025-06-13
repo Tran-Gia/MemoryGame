@@ -4,7 +4,7 @@ using WindowsFormsApplication1.Models.Units;
 
 namespace WindowsFormsApplication1.Forms.Buttons
 {
-    public class MatchingButton : Button
+    public class MatchingCard : Button
     {
         public MatchingState State { get; set; }
         public double StateDuration { get; set; } = 0;

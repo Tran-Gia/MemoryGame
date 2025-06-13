@@ -1,6 +1,6 @@
 ﻿namespace WindowsFormsApplication1.Enums
 {
-    public enum ButtonsPattern
+    public enum CardsPattern
     {
         Rectangle,
         Triangle,

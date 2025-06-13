@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApplication1.Enums;
 using WindowsFormsApplication1.Forms.Buttons;
-using WindowsFormsApplication1.Functions.MatchingButtonFunctions;
+using WindowsFormsApplication1.Functions.CardFunctions;
 using WindowsFormsApplication1.Functions.Units;
 using static System.Windows.Forms.Control;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace WindowsFormsApplication1.Functions.Controllers
 {
-    public class MatchingButtonController
+    public class CardController
     {
         private readonly ControlCollection _controls;
         private readonly ProtossPanel _form;
@@ -22,11 +19,11 @@ namespace WindowsFormsApplication1.Functions.Controllers
         private readonly Timer _levelTimer = new Timer();
 
         private int _amount = 0;
-        private Size _buttonSize = new Size(150,150);
+        private Size _cardSize = new Size(150,150);
         private Image _defaultImage = (Image)Properties.Resources.ResourceManager.GetObject("Protoss_Image_Default");
-        private MatchingButton[] _buttons;
-        private MatchingButton _firstSelectedButton;
-        private MatchingButton _secondSelectedButton;
+        private MatchingCard[] _cards;
+        private MatchingCard _firstSelectedCard;
+        private MatchingCard _secondSelectedCard;
         private int _score = 0;
         private int _combo = 1;
         private int _baseScore = 5;
@@ -36,10 +33,10 @@ namespace WindowsFormsApplication1.Functions.Controllers
         public int Level { get; set; } = 1;
         public int LevelTime { get; set; } = 20;
 
-        public MatchingButtonController(ControlCollection controls, ProtossPanel form, Size? buttonSize, Image defaultImage = null, int amount = 0)
+        public CardController(ControlCollection controls, ProtossPanel form, Size? cardSize, Image defaultImage = null, int amount = 0)
         {
             _amount = amount;
-            _buttonSize = buttonSize != null ? (Size)buttonSize : _buttonSize;
+            _cardSize = cardSize != null ? (Size)cardSize : _cardSize;
             _defaultImage = defaultImage ?? _defaultImage;
             _controls = controls;
             _form = form;
@@ -47,37 +44,37 @@ namespace WindowsFormsApplication1.Functions.Controllers
             _levelTimer.Tick += LevelTimer_Tick;
         }
 
-        public MatchingButtonController()
+        public CardController()
         {
         }
 
-        public MatchingButtonController SetAmount(int amount)
+        public CardController SetAmount(int amount)
         {
             _amount = amount;
             return this;
         }
 
-        public MatchingButtonController SetButtonSize(Size buttonSize) 
+        public CardController SetCardSize(Size cardSize) 
         {
-            _buttonSize = buttonSize;
+            _cardSize = cardSize;
             return this;
         }
 
-        public MatchingButtonController SetDefaultImage(Image image)
+        public CardController SetDefaultImage(Image image)
         {
             _defaultImage = image;
             return this;
         }
 
-        public MatchingButtonController SetGameState(bool gameStarted)
+        public CardController SetGameState(bool gameStarted)
         {
             _gameStarted = gameStarted;
 
-            if(_buttons != null)
+            if(_cards != null)
             {
-                foreach (var button in _buttons)
+                foreach (var card in _cards)
                 {
-                    button.Enabled = gameStarted;
+                    card.Enabled = gameStarted;
                 }
             }
 
@@ -101,61 +98,61 @@ namespace WindowsFormsApplication1.Functions.Controllers
             return _combo;
         }
 
-        public void CreateButtons()
+        public void CreateCards()
         {
-            _firstSelectedButton = _secondSelectedButton = null;
+            _firstSelectedCard = _secondSelectedCard = null;
 
-            _buttons = _buttons.CreateButtons(_buttonSize, _defaultImage, _amount);
-            foreach (var button in _buttons)
+            _cards = _cards.CreateCards(_cardSize, _defaultImage, _amount);
+            foreach (var card in _cards)
             {
-                button.Click += SelectOneButton;
+                card.Click += SelectOneCard;
             }
 
-            _buttons.SetButtonsLocation(Level);
-            _buttons.SetUnitTypeForButtons(_totalTypes);
+            _cards.SetCardsLocation(Level);
+            _cards.SetUnitTypeForCards(_totalTypes);
         }
 
-        public void DisplayButtons()
+        public void DisplayCards()
         {
-            _controls.AddRange(_buttons);
-            foreach (var button in _buttons)
+            _controls.AddRange(_cards);
+            foreach (var card in _cards)
             {
-                button.Visible = true;
-                button.Enabled = true;
+                card.Visible = true;
+                card.Enabled = true;
             }
         }
 
-        public void RevealButtons()
+        public void RevealCards()
         {
-            foreach (var button in _buttons)
+            foreach (var card in _cards)
             {
-                if (button.State == MatchingState.None)
+                if (card.State == MatchingState.None)
                 {
-                    button.Image = (Image)Properties.Resources.ResourceManager.GetObject(button.UnitType.ImagePath);
-                    button.State = MatchingState.Revealed;
+                    card.Image = (Image)Properties.Resources.ResourceManager.GetObject(card.UnitType.ImagePath);
+                    card.State = MatchingState.Revealed;
                 }
             }
         }
 
-        public void HideButtons()
+        public void HideCards()
         {
-            foreach(var button in _buttons)
+            foreach(var card in _cards)
             {
-                if (button.State == MatchingState.Revealed)
+                if (card.State == MatchingState.Revealed)
                 {
-                    button.Image = _defaultImage;
-                    button.State = MatchingState.None;
+                    card.Image = _defaultImage;
+                    card.State = MatchingState.None;
                 }
             }
         }
 
         public async Task RoundStart()
         {
-            RevealButtons();
+            RevealCards();
 
             await Task.Delay(2000);
 
-            HideButtons();
+            HideCards();
             _remainingTime = LevelTime;
 
             await Task.Delay(100);
@@ -166,62 +163,62 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
         public async Task InstantPair()
         {
-            while(_firstSelectedButton != null && _secondSelectedButton != null)
+            while(_firstSelectedCard != null && _secondSelectedCard != null)
             {
                 await Task.Delay(10);
             }
 
-            if(_firstSelectedButton != null)
+            if(_firstSelectedCard != null)
             {
-                var nextButton = _buttons.FirstOrDefault(button =>
-                    button.UnitType == _firstSelectedButton.UnitType &&
-                    button != _firstSelectedButton
+                var nextCard = _cards.FirstOrDefault(card =>
+                    card.UnitType == _firstSelectedCard.UnitType &&
+                    card != _firstSelectedCard
                 ); //doesn't pierce Revealed & Blocked
-                SelectOneButton(nextButton, new EventArgs());
+                SelectOneCard(nextCard, new EventArgs());
                 return;
             }
 
-            var randomIndex = new Random().Next(_buttons.Length - 1);
-            var firstButton = _buttons.ElementAtOrDefault(randomIndex);
-            var secondButton = _buttons.FirstOrDefault(button =>
-                button.UnitType == firstButton.UnitType &&
-                button != firstButton
+            var randomIndex = new Random().Next(_cards.Length - 1);
+            var firstCard = _cards.ElementAtOrDefault(randomIndex);
+            var secondCard = _cards.FirstOrDefault(card =>
+                card.UnitType == firstCard.UnitType &&
+                card != firstCard
             );
 
-            SelectOneButton(firstButton, new EventArgs());
+            SelectOneCard(firstCard, new EventArgs());
             await Task.Delay(50);
-            SelectOneButton(secondButton, new EventArgs());
+            SelectOneCard(secondCard, new EventArgs());
         }
 
-        private async void SelectOneButton(object sender, EventArgs e)
+        private async void SelectOneCard(object sender, EventArgs e)
         {
-            if (_secondSelectedButton != null || !_gameStarted) return;
+            if (_secondSelectedCard != null || !_gameStarted) return;
 
-            var selectedButton = (MatchingButton)sender;
+            var selectedCard = (MatchingCard)sender;
 
-            if (selectedButton == null ||
-                selectedButton.State != MatchingState.None ||
-                selectedButton == _firstSelectedButton) 
+            if (selectedCard == null ||
+                selectedCard.State != MatchingState.None ||
+                selectedCard == _firstSelectedCard) 
                 return;
 
-            if (_secondSelectedButton == null && _firstSelectedButton != null)
+            if (_secondSelectedCard == null && _firstSelectedCard != null)
             {
-                _secondSelectedButton = selectedButton;
+                _secondSelectedCard = selectedCard;
             }
             else
             {
-                _firstSelectedButton = selectedButton;
+                _firstSelectedCard = selectedCard;
             }
 
-            MatchingButtonControllerFunctions.SelectOneButton(selectedButton);
+            CardControllerFunctions.SelectOneCard(selectedCard);
 
-            if (_secondSelectedButton == null) return;
+            if (_secondSelectedCard == null) return;
 
             var isPair = 
-                await MatchingButtonControllerFunctions.CheckPairAsync
+                await CardControllerFunctions.CheckPairAsync
                 (
-                    _firstSelectedButton,
-                    _secondSelectedButton,
+                    _firstSelectedCard,
+                    _secondSelectedCard,
                     _defaultImage,
                     true
                 );
@@ -233,29 +230,29 @@ namespace WindowsFormsApplication1.Functions.Controllers
                     _score -= 2;
                 _form.DisplayScoreCombo(_score, _combo);
 
-                _firstSelectedButton = _secondSelectedButton = null;
+                _firstSelectedCard = _secondSelectedCard = null;
                 return;
             }
 
-            _score += _firstSelectedButton.UnitType.Score + _baseScore * _combo;
+            _score += _firstSelectedCard.UnitType.Score + _baseScore * _combo;
             _combo++;
 
-            _controls.Remove(_firstSelectedButton);
-            _firstSelectedButton.Dispose();
-            _controls.Remove(_secondSelectedButton);
-            _secondSelectedButton.Dispose();
+            _controls.Remove(_firstSelectedCard);
+            _firstSelectedCard.Dispose();
+            _controls.Remove(_secondSelectedCard);
+            _secondSelectedCard.Dispose();
             _form.DisplayScoreCombo(_score, _combo);
 
             //manaProgressBar.Step = 10 + 3 * Combo;
             //manaProgressBar.PerformStep();
             //toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
 
-            _firstSelectedButton = _secondSelectedButton = null;
-            _buttons = _buttons
-                .Where(button => _controls.Contains(button))
+            _firstSelectedCard = _secondSelectedCard = null;
+            _cards = _cards
+                .Where(card => _controls.Contains(card))
                 .ToArray();
 
-            if(_buttons.Length == 0)
+            if(_cards.Length == 0)
             {
                 RoundEnd(true);
             }
@@ -308,8 +305,11 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
             var unitDictionary = UnitDictionary.GetInstance();
             var nextUnit = unitDictionary.GetUnit(_totalTypes-1);
-            int advance = NextLevelRevealDialog.NextLevelDetails(_score, timeSpent, bonusScore, (int) _remainingTime, _baseScore, _amount, nextUnit.Name, (Image)Properties.Resources.ResourceManager.GetObject(nextUnit.ImagePath));
-            if (advance == 1)
+            var advance = NextLevelRevealDialog
+                .NextLevelDetails(_score, timeSpent, bonusScore, (int) _remainingTime, _baseScore, _amount, nextUnit.Name,
+                    (Image)Properties.Resources.ResourceManager.GetObject(nextUnit.ImagePath)
+                );
+            if (advance)
                 _form.LevelAdvance();
             else
                 MessageBox.Show("Final Score: " + _score);
@@ -320,8 +320,8 @@ namespace WindowsFormsApplication1.Functions.Controllers
             if (_gameStarted)
             {
                 _remainingTime -= 0.1;
-                //prevents Race Condition: in the middle of pairing last correct buttons but timer runs out first
-                if (_remainingTime <= 0 && _secondSelectedButton == null)
+                //prevents Race Condition: in the middle of pairing last correct cards but timer runs out first
+                if (_remainingTime <= 0 && _secondSelectedCard == null)
                 {
                     RoundEnd(false);
                 }

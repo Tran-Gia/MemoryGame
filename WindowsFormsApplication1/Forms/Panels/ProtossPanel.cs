@@ -15,10 +15,10 @@ namespace WindowsFormsApplication1
         bool MusicPlaying = false;
         bool ExitGame = true;
         int preMana = 0;
-        ToolTip toolTip1;
-        MediaPlayer BGMPlayer;
+        readonly ToolTip toolTip1;
+        readonly MediaPlayer BGMPlayer;
         bool SoundOn = true;
-        private MatchingButtonController _controller;
+        private CardController _controller;
         #endregion
         public ProtossPanel()
         {
@@ -28,8 +28,10 @@ namespace WindowsFormsApplication1
             BGMPlayer = new MediaPlayer();
             PauseBtn.Enabled = false;
             PowerUpBtn.Enabled = false;
-            toolTip1 = new ToolTip();
-            toolTip1.ShowAlways = true;
+            toolTip1 = new ToolTip
+            {
+                ShowAlways = true
+            };
             toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
             BackgroundImage = Constants.Backgrounds.ProtossBackground;
             BackgroundImageLayout = ImageLayout.Stretch; //TODO: update this
@@ -42,8 +44,8 @@ namespace WindowsFormsApplication1
         {
             Application.DoEvents();
             Opacity = 100;
-            _controller = new MatchingButtonController(Controls, this, new Size(100, 100),null, 14);
-            _controller.CreateButtons();
+            _controller = new CardController(Controls, this, new Size(100, 100),null, 14);
+            _controller.CreateCards();
         }
 
         #region Game Systems
@@ -78,7 +80,7 @@ namespace WindowsFormsApplication1
             progressBar1.Value = 1;
             TimeLabel.Text = "00 : 00";
 
-            _controller.CreateButtons();
+            _controller.CreateCards();
             ActiveForm.Text = "Level " + _controller.Level;
         }
         #endregion
@@ -137,7 +139,7 @@ namespace WindowsFormsApplication1
             if (GameStartBtn.Text == "Start")
             {
                 BGMStart();
-                _controller.DisplayButtons();
+                _controller.DisplayCards();
                 await Task.Delay(600);
                 await _controller.RoundStart();
                 timer1.Start();
@@ -157,7 +159,7 @@ namespace WindowsFormsApplication1
                 //Combo = 1;
                 //reduce score here ?
 
-                _controller.CreateButtons();
+                _controller.CreateCards();
             }
         }
 
@@ -258,9 +260,9 @@ namespace WindowsFormsApplication1
                     {
                         manaProgressBar.Step = -500;
                         manaProgressBar.PerformStep();
-                        _controller.RevealButtons();
+                        _controller.RevealCards();
                         await Task.Delay(1500);
-                        _controller.HideButtons();
+                        _controller.HideCards();
                     }
                     else
                     {
@@ -299,7 +301,7 @@ namespace WindowsFormsApplication1
             PauseBtn.Enabled = false;
             PowerUpBtn.Enabled = false;
 
-            _controller.RevealButtons();
+            _controller.RevealCards();
             _controller.SetGameState(false);
         }
 
