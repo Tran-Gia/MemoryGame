@@ -1,75 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsApplication1.Enums;
+using WindowsFormsApplication1.Functions.UserSettings;
 
 namespace WindowsFormsApplication1
 {
     public partial class GameMenu : Form
     {
-        static bool firstload = true;
         static int result;
-        static string MusicBtnName;
-        static string SoundBtnName;
         public GameMenu()
         {
             InitializeComponent();
-            if (firstload)
-            {
-                MusicBtnName = MusicBtn.Text;
-                SoundBtnName = SoundBtn.Text;
-                firstload = false;
-            }
-            else
-            {
-                MusicBtn.Text = MusicBtnName;
-                SoundBtn.Text = SoundBtnName;
-            }
+
+            var musicStatus = UserSetting.MusicEnabled ? "ON" : "OFF";
+            var soundStatus = UserSetting.SoundEnabled ? "ON" : "OFF";
+
+            MusicBtn.Text = $"Music: {musicStatus}";
+            SoundBtn.Text = $"Sound: {soundStatus}";
+
+            ResolutionCboBox.ValueMember = "Resolution";
+            ResolutionCboBox.DisplayMember = "ResolutionName";
+            ResolutionCboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            var resolutionList = Enum.GetValues(typeof(Resolution)).Cast<Resolution>()
+                .Select(e => new UserResolution{
+                    Resolution = e, ResolutionName = e.ToString().Trim('_') 
+                }).ToList();
+
+            ResolutionCboBox.DataSource = resolutionList;
+            ResolutionCboBox.SelectedItem = resolutionList.FirstOrDefault(
+                x => x.Resolution == UserSetting.Resolution);
+            ResolutionCboBox.SelectedIndexChanged += ResolutionCboBox_SelectedIndexChanged;
         }
+
         public static int MenuRequest()
         {
             //Music (1) - Sound (2) - Exit To Menu (3) - Exit Game (4) - Cancel (5)
-            GameMenu menu = new GameMenu();
+            GameMenu menu = new GameMenu
+            {
+                StartPosition = FormStartPosition.CenterParent,
+            };
             menu.ShowDialog();
-            if(menu.DialogResult == DialogResult.Yes)
-                return result;
-            return 0;
+
+            return menu.DialogResult == DialogResult.Yes ? result : 0;
         }
         private void BackMenuBtn_Click(object sender, EventArgs e)
         {
-            result = 5;
-            DialogResult = DialogResult.Yes;
+            DialogResult = DialogResult.Cancel;
         }
 
         private void MusicBtn_Click(object sender, EventArgs e)
         {
-            if (MusicBtnName == "Music: ON")
-            {
-                MusicBtnName = "Music: OFF";
-            }
-            else
-            {
-                MusicBtnName = "Music: ON";
-            }
+            UserSetting.MusicEnabled = !UserSetting.MusicEnabled;
+
             result = 1;
             DialogResult = DialogResult.Yes;
         }
 
         private void SoundBtn_Click(object sender, EventArgs e)
         {
-            if (SoundBtnName == "Sound: ON")
-            {
-                SoundBtnName = "Sound: OFF";
-            }
-            else
-            {
-                SoundBtnName = "Sound: ON";
-            }
+            UserSetting.SoundEnabled = !UserSetting.SoundEnabled;
+
             result = 2;
             DialogResult = DialogResult.Yes;
         }
@@ -84,6 +76,12 @@ namespace WindowsFormsApplication1
         {
             result = 4;
             DialogResult = DialogResult.Yes;
+        }
+
+        private void ResolutionCboBox_SelectedIndexChanged (object sender, EventArgs e)
+        {
+            var selectedItem  = (UserResolution)ResolutionCboBox.SelectedItem;
+            UserSetting.Resolution = selectedItem.Resolution;
         }
     }
 }

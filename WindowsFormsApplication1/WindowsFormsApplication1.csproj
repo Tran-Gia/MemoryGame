@@ -71,6 +71,7 @@
     <Compile Include="Enums\CardsPattern.cs" />
     <Compile Include="Enums\FactionType.cs" />
     <Compile Include="Enums\MatchingState.cs" />
+    <Compile Include="Enums\Resolution.cs" />
     <Compile Include="Forms\Buttons\MatchingCard.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -96,13 +97,17 @@
       <DependentUpon>NextLevelRevealDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions\CardFunctions\CardControllerFunctions.cs" />
+    <Compile Include="Functions\GlobalFunctions\AwaitWithConditions.cs" />
     <Compile Include="Functions\Units\UnitDictionary.cs" />
+    <Compile Include="Functions\UserSettings\UserResolution.cs" />
+    <Compile Include="Functions\UserSettings\UserSettingExtension.cs" />
+    <Compile Include="Functions\UserSettings\UserSetting.cs" />
     <Compile Include="Models\Controllers\CardController.cs" />
     <Compile Include="Models\Units\Unit.cs" />
-    <Compile Include="PowerSkill.cs">
+    <Compile Include="Forms\Dialogs\PowerSkill.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PowerSkill.Designer.cs">
+    <Compile Include="Forms\Dialogs\PowerSkill.Designer.cs">
       <DependentUpon>PowerSkill.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -133,7 +138,7 @@
     <EmbeddedResource Include="Forms\Dialogs\NextLevelRevealDialog.resx">
       <DependentUpon>NextLevelRevealDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PowerSkill.resx">
+    <EmbeddedResource Include="Forms\Dialogs\PowerSkill.resx">
       <DependentUpon>PowerSkill.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

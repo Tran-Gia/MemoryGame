@@ -3,7 +3,9 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
+using WindowsFormsApplication1.Enums;
 using WindowsFormsApplication1.Functions.Controllers;
+using WindowsFormsApplication1.Functions.UserSettings;
 
 namespace WindowsFormsApplication1
 {
@@ -11,13 +13,11 @@ namespace WindowsFormsApplication1
     public partial class ProtossPanel : Form
     {
         #region properties
-        bool MusicOn = true;
         bool MusicPlaying = false;
         bool ExitGame = true;
         int preMana = 0;
         readonly ToolTip toolTip1;
         readonly MediaPlayer BGMPlayer;
-        bool SoundOn = true;
         private CardController _controller;
         #endregion
         public ProtossPanel()
@@ -26,7 +26,6 @@ namespace WindowsFormsApplication1
             FormClosed += ProtossPanel_FormClosed;
             InitializeComponent();
             BGMPlayer = new MediaPlayer();
-            PauseBtn.Enabled = false;
             PowerUpBtn.Enabled = false;
             toolTip1 = new ToolTip
             {
@@ -35,16 +34,17 @@ namespace WindowsFormsApplication1
             toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
             BackgroundImage = Constants.Backgrounds.ProtossBackground;
             BackgroundImageLayout = ImageLayout.Stretch; //TODO: update this
-            //CenterToScreen();
-            ClientSize = new Size(1280, 720);
-            //this.ClientSize = new System.Drawing.Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height); //TODO: use Screen.PrimaryScreen.Bounds to get the current display resolution
+            UserSettingExtension.SetResolution(this);
+            manaProgressBar.Minimum = 0;
+            manaProgressBar.Maximum = 1000;
         }
 
         private void ProtossPanel_Shown(object sender, EventArgs e)
         {
             Application.DoEvents();
             Opacity = 100;
-            _controller = new CardController(Controls, this, new Size(100, 100),null, 14);
+            _controller = new CardController(this, new Size(100, 100),null, 14);
+            Timer1.Interval = 100;
             _controller.CreateCards();
         }
 
@@ -67,10 +67,9 @@ namespace WindowsFormsApplication1
 
         public void RoundCleanup()
         {
-            timer1.Stop();
-            PauseBtn.Enabled = false;
+            Timer1.Stop();
             PowerUpBtn.Enabled = false;
-            GameStartBtn.Text = "Start";
+            GameStartBtn.Text = "START";
             GameStartBtn.Enabled = true;
         }
 
@@ -78,29 +77,38 @@ namespace WindowsFormsApplication1
         {
             preMana = manaProgressBar.Value;
             progressBar1.Value = 1;
-            TimeLabel.Text = "00 : 00";
+            TimeLabel.Text = "00:00";
 
             _controller.CreateCards();
             ActiveForm.Text = "Level " + _controller.Level;
+        }
+
+        public void UpdateManaProgressBar(int value)
+        {
+            if (manaProgressBar.Value + value > manaProgressBar.Maximum)
+                manaProgressBar.Value = manaProgressBar.Maximum;
+            else
+                manaProgressBar.Value += value;
+
+            toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
         }
         #endregion
 
         #region Sound Setting
         public void BGMStart()
         {
-            if (MusicOn && !MusicPlaying)
+            if (UserSetting.MusicEnabled && !MusicPlaying)
             {
                 MusicPlaying = true;
-                BGMPlayer.Open(new Uri("Resources/Audio/ArtanisBGM.wav", UriKind.Relative));
+                if(BGMPlayer.Source == null)
+                    BGMPlayer.Open(new Uri("Resources/Audio/ArtanisBGM.wav", UriKind.Relative));
                 BGMPlayer.Play();
                 BGMPlayer.MediaEnded += BGMPlayer_MediaEnded;
             }
         }
         public void BGMStop()
         {
-            BGMPlayer.Stop();
-            BGMPlayer.Close();
-            MusicOn = false;
+            BGMPlayer.Pause();
             MusicPlaying = false;
         }
         private void BGMPlayer_MediaEnded(object sender, EventArgs e)
@@ -110,10 +118,21 @@ namespace WindowsFormsApplication1
         }
 
         #endregion
+        public void SetGameTimerStatus(bool isStarted)
+        {
+            if (isStarted)
+            {
+                Timer1.Start();
+                return;
+            }
+
+            Timer1.Stop();
+        }
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            manaProgressBar.Minimum = 0;
-            manaProgressBar.Maximum = 1000;
+            if (_controller.GameIsPaused || !_controller.GameIsInProgress)
+                return;
+
             manaProgressBar.Step = 10;
             manaProgressBar.PerformStep();
             toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
@@ -127,132 +146,102 @@ namespace WindowsFormsApplication1
             var minutesLabel = remainingTime.Minutes < 10 ? $"0{remainingTime.Minutes}" : remainingTime.Minutes.ToString();
             var secondsRoundup = Math.Ceiling(remainingTime.Seconds + (remainingTime.Milliseconds / 1000.0));
             var secondsLabel = secondsRoundup < 10 ? $"0{secondsRoundup}" : secondsRoundup.ToString();
-            TimeLabel.Text = $"{minutesLabel} : {secondsLabel}";
+            TimeLabel.Text = $"{minutesLabel}:{secondsLabel}";
 
             if(remainingTime.TotalSeconds <= 0)
-                timer1.Stop();
+                Timer1.Stop();
         }
 
         #region Game Buttons
         private async void GameStartBtn_Click(object sender, EventArgs e)
         {
-            if (GameStartBtn.Text == "Start")
+            if (GameStartBtn.Text == "START")
             {
+                SetGameTimerStatus(true);
+                GameStartBtn.Enabled = false;
                 BGMStart();
                 _controller.DisplayCards();
-                await Task.Delay(600);
+                await Task.Delay(500);
                 await _controller.RoundStart();
-                timer1.Start();
-                GameStartBtn.Text = "Replay";
-                PauseBtn.Enabled = true;
+                GameStartBtn.Text = "REPLAY";
                 PowerUpBtn.Enabled = true;
+                GameStartBtn.Enabled = true;
             }
             else
             {
+                progressBar1.Value = 1;
                 manaProgressBar.Step = preMana - manaProgressBar.Value;
                 manaProgressBar.PerformStep();
                 toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
                 PowerUpBtn.Enabled = false;
-                PauseBtn.Enabled = false;
-                GameStartBtn.Text = "Start";
-                timer1.Stop();
-                //Combo = 1;
-                //reduce score here ?
+                GameStartBtn.Text = "START";
 
-                _controller.CreateCards();
-            }
-        }
-
-        private void PauseBtn_Click(object sender, EventArgs e)
-        {
-            if (PauseBtn.Text == "Pause")
-            {
-                BGMPlayer.Pause();
-                GameStartBtn.Enabled = false;
-                PowerUpBtn.Enabled = false;
-                timer1.Stop();
-                PauseBtn.Text = "Resume";
-
-                _controller.SetGameState(false);
-            }
-            else
-            {
-                //Pause text = resume
-                BGMPlayer.Play();
-                GameStartBtn.Enabled = true;
-                PowerUpBtn.Enabled = true;
-                timer1.Start();
-                PauseBtn.Text = "Pause";
-
-                _controller.SetGameState(true);
+                _controller.RoundRestart();
             }
         }
 
         private void MenuBtn_Click(object sender, EventArgs e)
         {
+            _controller.PauseGame();
+            SetGameTimerStatus(false);
+
             var menuIsDismissed = false;
             //Music (1) - Sound (2) - Exit To Menu (3) - Exit Game (4) - Cancel (5)
             int result = GameMenu.MenuRequest();
             switch (result)
             {
-                #region case 1: Music
                 case 1:
-                    if (MusicOn)
+                    if (UserSetting.MusicEnabled && _controller.GameIsInProgress)
                     {
-                        BGMStop();
+                        BGMStart();
+                        break;
                     }
-                    else
-                    {
-                        MusicOn = true;
-                        if (PauseBtn.Enabled || _controller.Level>=1)
-                            BGMStart();
-                    }
+
+                    BGMStop();
                     break;
-                #endregion
-                #region case 2: Sound
+
                 case 2:
-                    if (SoundOn)
-                    {
-                        SoundOn = false;
-                    }
-                    else
-                    {
-                        SoundOn = true;
-                    }
+                    //do nothin
                     break;
-                #endregion
-                #region case 3: Exit To Menu
+
                 case 3:
                     menuIsDismissed = true;
                     ExitGame = false;
                     BGMPlayer.Stop();
-                    timer1.Stop();
-                    this.Close();
+                    Close();
                     FirstPanel FP = new FirstPanel();
                     FP.Show();
                     break;
-                #endregion
-                #region case 4: Exit Game
+
                 case 4:
                     menuIsDismissed = true;
-                    timer1.Stop();
-                    _controller.SetGameState(false);
                     Application.Exit();
                     break;
-                #endregion
-                #region case 5: Cancel
-                case 5:
+
+                default:
                     menuIsDismissed = true;
                     break;
-                #endregion
             }
-            if (!menuIsDismissed)
-                MenuBtn_Click(sender, e);
+
+            if (menuIsDismissed)
+            {
+                UserSettingExtension.SetResolution(this);
+                _controller.ResumeGame();
+                SetGameTimerStatus(true);
+
+                return;
+            }
+
+            MenuBtn_Click(sender, e);
         }
 
         private async void PowerUpBtn_Click(object sender, EventArgs e)
         {
-            int result = PowerSkill.Show(ProtossPanel.ActiveForm, PowerUpBtn.Location.X,PowerUpBtn.Location.Y);
+            int result = PowerSkill.Show(ActiveForm, PowerUpBtn.Location.X,PowerUpBtn.Location.Y);
+
+            if (!_controller.GameIsInProgress || _controller.GameOver)
+                return;
+
             switch (result)
             {
                 case 1:
@@ -260,9 +249,7 @@ namespace WindowsFormsApplication1
                     {
                         manaProgressBar.Step = -500;
                         manaProgressBar.PerformStep();
-                        _controller.RevealCards();
-                        await Task.Delay(1500);
-                        _controller.HideCards();
+                        _controller.RevealCards(1.5);
                     }
                     else
                     {
@@ -297,12 +284,9 @@ namespace WindowsFormsApplication1
         #endregion
         public void GameOver()
         {
-            GameStartBtn.Text = "Replay";
-            PauseBtn.Enabled = false;
+            progressBar1.Value = 1;
+            GameStartBtn.Text = "REPLAY";
             PowerUpBtn.Enabled = false;
-
-            _controller.RevealCards();
-            _controller.SetGameState(false);
         }
 
     }

@@ -13,19 +13,17 @@ namespace WindowsFormsApplication1
 {
     public partial class FirstPanel : Form
     {
-        static bool firstload;
+        private bool firstload;
         public FirstPanel()
         {
-            Shown += FirstPanel_Shown;
             InitializeComponent();
             ClassicBtn.Visible = false;
             ChooseModeLabel.Visible = false;
-            DesBtn.Visible = false;
             ModeBackBtn.Visible = false;
             AiurBtn.Visible = false;
             ChooseThemeLabel.Visible = false;
             ThemeBackBtn.Visible = false;
-            if (firstload == false)
+            if (!firstload)
             {
                 SoundPlayer sp = new SoundPlayer(Properties.Resources.StartSound);
                 //sp.Play();
@@ -40,7 +38,6 @@ namespace WindowsFormsApplication1
             Welcome1.Visible = true;
             Welcome2.Visible = true;
             InsBtn.Visible = true;
-            ActiveForm.Opacity = 100;
             Application.DoEvents();
         }
 
@@ -64,7 +61,6 @@ namespace WindowsFormsApplication1
             Welcome2.Hide();
             ClassicBtn.Visible = true;
             ChooseModeLabel.Visible = true;
-            DesBtn.Visible = true;
             ModeBackBtn.Visible = true;
         }
 
@@ -72,7 +68,6 @@ namespace WindowsFormsApplication1
         {
             ClassicBtn.Visible = false;
             ChooseModeLabel.Visible = false;
-            DesBtn.Visible = false;
             ModeBackBtn.Visible = false;
             StartBtn.Show();
             InsBtn.Show();
@@ -92,7 +87,6 @@ namespace WindowsFormsApplication1
             Mode = 0;
             ClassicBtn.Visible = false;
             ChooseModeLabel.Visible = false;
-            DesBtn.Visible = false;
             ModeBackBtn.Visible = false;
             //Choose a theme to play
             AiurBtn.Visible = true;
@@ -104,7 +98,6 @@ namespace WindowsFormsApplication1
         {
             ClassicBtn.Visible = true;
             ChooseModeLabel.Visible = true;
-            DesBtn.Visible = true;
             ModeBackBtn.Visible = true;
             AiurBtn.Visible = false;
             ChooseThemeLabel.Visible = false;

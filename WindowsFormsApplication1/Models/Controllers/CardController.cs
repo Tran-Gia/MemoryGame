@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Windows.Forms;
 using WindowsFormsApplication1.Enums;
 using WindowsFormsApplication1.Forms.Buttons;
 using WindowsFormsApplication1.Functions.CardFunctions;
+using WindowsFormsApplication1.Functions.GlobalFunctions;
 using WindowsFormsApplication1.Functions.Units;
 using static System.Windows.Forms.Control;
 
@@ -13,10 +15,13 @@ namespace WindowsFormsApplication1.Functions.Controllers
 {
     public class CardController
     {
+        private const int MAX_TYPE = 7;
+        private const double TIMER_INTERVAL = 0.1;
+        private const double INFINITE_DURATION = 1000;
+
         private readonly ControlCollection _controls;
         private readonly ProtossPanel _form;
-        private readonly int MAX_TYPE = 7;
-        private readonly Timer _levelTimer = new Timer();
+        private readonly Timer _controllerTimer = new Timer();
 
         private int _amount = 0;
         private Size _cardSize = new Size(150,150);
@@ -28,20 +33,23 @@ namespace WindowsFormsApplication1.Functions.Controllers
         private int _combo = 1;
         private int _baseScore = 5;
         private int _totalTypes = 5;
-        private bool _gameStarted = false;
         private double _remainingTime;
-        public int Level { get; set; } = 1;
+        public bool GameIsInProgress { get; private set; } = false;
+        public bool GameIsPaused { get; private set; } = false;
+        public bool GameOver { get; private set; } = false;
+
+        public int Level { get; set; } = 0;
         public int LevelTime { get; set; } = 20;
 
-        public CardController(ControlCollection controls, ProtossPanel form, Size? cardSize, Image defaultImage = null, int amount = 0)
+        public CardController(ProtossPanel form, Size? cardSize, Image defaultImage = null, int amount = 0)
         {
             _amount = amount;
             _cardSize = cardSize != null ? (Size)cardSize : _cardSize;
             _defaultImage = defaultImage ?? _defaultImage;
-            _controls = controls;
+            _controls = form.Controls;
             _form = form;
-            _levelTimer.Interval = 100;
-            _levelTimer.Tick += LevelTimer_Tick;
+            _controllerTimer.Interval = (int)(TIMER_INTERVAL * 1000);
+            _controllerTimer.Tick += ControllerTimer_Tick;
         }
 
         public CardController()
@@ -66,19 +74,31 @@ namespace WindowsFormsApplication1.Functions.Controllers
             return this;
         }
 
-        public CardController SetGameState(bool gameStarted)
+        public CardController PauseGame()
         {
-            _gameStarted = gameStarted;
+            if (GameOver)
+                return this;
 
-            if(_cards != null)
+            HideCards();
+            GameIsPaused = true;
+
+            return this;
+        }
+
+        public CardController ResumeGame()
+        {
+            if (_cards == null || _cards.Length == 0 || GameOver)
+                return this;
+
+            foreach (var card in _cards)
             {
-                foreach (var card in _cards)
+                card.Enabled = true;
+                if(card.State == MatchingState.Revealed)
                 {
-                    card.Enabled = gameStarted;
+                    card.Image = (Image)Properties.Resources.ResourceManager.GetObject(card.UnitType.ImagePath);
                 }
             }
-
-            _levelTimer.Enabled = gameStarted;
+            GameIsPaused = false;
 
             return this;
         }
@@ -114,6 +134,8 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
         public void DisplayCards()
         {
+            GameIsPaused = false;
+
             _controls.AddRange(_cards);
             foreach (var card in _cards)
             {
@@ -122,14 +144,15 @@ namespace WindowsFormsApplication1.Functions.Controllers
             }
         }
 
-        public void RevealCards()
+        public void RevealCards(double duration = INFINITE_DURATION, bool forcedReveal = false)
         {
             foreach (var card in _cards)
             {
-                if (card.State == MatchingState.None)
+                if (card.State == MatchingState.None || forcedReveal)
                 {
                     card.Image = (Image)Properties.Resources.ResourceManager.GetObject(card.UnitType.ImagePath);
                     card.State = MatchingState.Revealed;
+                    card.StateDuration = duration;
                 }
             }
         }
@@ -138,61 +161,63 @@ namespace WindowsFormsApplication1.Functions.Controllers
         {
             foreach(var card in _cards)
             {
-                if (card.State == MatchingState.Revealed)
+                if( card.State != MatchingState.Selected)
                 {
                     card.Image = _defaultImage;
-                    card.State = MatchingState.None;
                 }
+                card.Enabled = false;
             }
         }
 
         public async Task RoundStart()
         {
-            RevealCards();
+            _controllerTimer.Start();
+            RevealCards(2);
 
-            await Task.Delay(2000);
-
-            HideCards();
+            await AwaitWithConditions.
+                AdditionalTimeoutWhileTrue(() => 
+                GameIsPaused, 2000, true);
             _remainingTime = LevelTime;
 
             await Task.Delay(100);
 
-            SetGameState(true);
-            _levelTimer.Start();
+            GameIsInProgress = true;
+        }
+
+        public void RoundRestart()
+        {
+            //Combo = 1;
+            //reduce score here ?
+
+            GameIsInProgress = false;
+            GameIsPaused = false;
+            GameOver = false;
+            CreateCards();
         }
 
         public async Task InstantPair()
         {
-            while(_firstSelectedCard != null && _secondSelectedCard != null)
+            await AwaitWithConditions.UntilFulfilled(() => 
+                _secondSelectedCard == null);
+
+            var selectedCards = CardControllerFunctions
+                .GetInstantPair(_cards, _firstSelectedCard);
+
+            if (_firstSelectedCard == null)
             {
-                await Task.Delay(10);
+                SelectOneCard(selectedCards.Item1, new EventArgs());
+                await Task.Delay(50);
             }
 
-            if(_firstSelectedCard != null)
-            {
-                var nextCard = _cards.FirstOrDefault(card =>
-                    card.UnitType == _firstSelectedCard.UnitType &&
-                    card != _firstSelectedCard
-                ); //doesn't pierce Revealed & Blocked
-                SelectOneCard(nextCard, new EventArgs());
-                return;
-            }
-
-            var randomIndex = new Random().Next(_cards.Length - 1);
-            var firstCard = _cards.ElementAtOrDefault(randomIndex);
-            var secondCard = _cards.FirstOrDefault(card =>
-                card.UnitType == firstCard.UnitType &&
-                card != firstCard
-            );
-
-            SelectOneCard(firstCard, new EventArgs());
-            await Task.Delay(50);
-            SelectOneCard(secondCard, new EventArgs());
+            SelectOneCard(selectedCards.Item2, new EventArgs());
         }
 
         private async void SelectOneCard(object sender, EventArgs e)
         {
-            if (_secondSelectedCard != null || !_gameStarted) return;
+            if (_secondSelectedCard != null ||
+                !GameIsInProgress ||
+                GameIsPaused) 
+                return;
 
             var selectedCard = (MatchingCard)sender;
 
@@ -243,6 +268,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
             _secondSelectedCard.Dispose();
             _form.DisplayScoreCombo(_score, _combo);
 
+            _form.UpdateManaProgressBar((int)_firstSelectedCard.UnitType.ManaGain);
             //manaProgressBar.Step = 10 + 3 * Combo;
             //manaProgressBar.PerformStep();
             //toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
@@ -261,7 +287,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
         private void RoundEnd(bool isWon)
         {
             _form.DisplayScoreCombo(_score, _combo);
-            SetGameState(false);
+            GameIsInProgress = false;
 
             if (isWon)
             {
@@ -269,8 +295,24 @@ namespace WindowsFormsApplication1.Functions.Controllers
                 return;
             }
 
-            MessageBox.Show("Aiur has fallen to the Zergs.\nIt will never be restored again.\nFinal Score: " + _score, "Mission Failed!",
-                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            GameOver = true;
+            foreach (var card in _cards)
+            {
+                card.Enabled = false;
+            }
+            RevealCards(INFINITE_DURATION, true);
+
+            MessageBox.Show
+            (
+                "Aiur has fallen to the Zergs." +
+                "\nIt will never be restored again." +
+                "\nFinal Score: " + _score,
+                "Mission Failed!",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1
+            );
+
             _form.GameOver();
         }
 
@@ -283,8 +325,10 @@ namespace WindowsFormsApplication1.Functions.Controllers
             //    //Time:         120 - 115   - 110  - 105   - 100 -   95   -  90   -  85
             //    //Conversion:   0.5 - 0.75  - 0.75 - 1.5   - 1.5 -  1.75  - 1.75  - 2.5
             var timeSpent = LevelTime - (int)_remainingTime;
-            int bonusScore = (int)(_remainingTime / 2 + _remainingTime / 4 * (Level / 2) +
-                _remainingTime / 2 * (Level / 4) + _remainingTime * (Level / 10));
+            int bonusScore = (int)(_remainingTime / 2 + 
+                _remainingTime / 4 * (Level / 2) +
+                _remainingTime / 2 * (Level / 4) + 
+                _remainingTime * (Level / 10));
             _score += bonusScore;
             _form.DisplayScoreCombo(_score, 1);
 
@@ -305,25 +349,60 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
             var unitDictionary = UnitDictionary.GetInstance();
             var nextUnit = unitDictionary.GetUnit(_totalTypes-1);
-            var advance = NextLevelRevealDialog
-                .NextLevelDetails(_score, timeSpent, bonusScore, (int) _remainingTime, _baseScore, _amount, nextUnit.Name,
-                    (Image)Properties.Resources.ResourceManager.GetObject(nextUnit.ImagePath)
-                );
+            var advance = NextLevelRevealDialog.NextLevelDetails
+            (
+                _score,
+                timeSpent,
+                bonusScore,
+                (int) _remainingTime,
+                _baseScore,
+                _amount,
+                nextUnit.Name,
+                (Image)Properties.Resources.ResourceManager.GetObject(nextUnit.ImagePath)
+            );
+
             if (advance)
+            {
                 _form.LevelAdvance();
-            else
-                MessageBox.Show("Final Score: " + _score);
+                return;
+            }
+
+            GameOver = true;
+            MessageBox.Show("Final Score: " + _score);
         }
 
-        private void LevelTimer_Tick(object sender, EventArgs e)
+        private void ControllerTimer_Tick(object sender, EventArgs e)
         {
-            if (_gameStarted)
+            if (GameIsPaused)
+                return;
+
+            if (GameIsInProgress)
             {
-                _remainingTime -= 0.1;
-                //prevents Race Condition: in the middle of pairing last correct cards but timer runs out first
+                _remainingTime -= TIMER_INTERVAL;
+                //prevents Race Condition: pairing last correct cards but timer runs out first
                 if (_remainingTime <= 0 && _secondSelectedCard == null)
                 {
                     RoundEnd(false);
+                    return;
+                }
+            }
+
+            if(_cards == null || _cards.Length == 0)
+                return; 
+
+            foreach (var card in _cards)
+            {
+                if (card.StateDuration > 0 &&
+                    card.StateDuration < INFINITE_DURATION)
+                    card.StateDuration -= TIMER_INTERVAL;
+
+                if (card.StateDuration <= 0 &&
+                    card.State != MatchingState.None &&
+                    card.State != MatchingState.Selected)
+                {
+                    card.Image = _defaultImage;
+                    card.State = MatchingState.None;
+                    card.StateDuration = 0;
                 }
             }
         }

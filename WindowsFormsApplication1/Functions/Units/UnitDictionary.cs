@@ -16,56 +16,56 @@ namespace WindowsFormsApplication1.Functions.Units
                 { 
                     0, new Unit
                     {
-                        Id = 0, HpGain= 1, ManaGain =1,
+                        Id = 0, HpGain= 1, ManaGain =10,
                         Name = "Probe", Race = "Protoss", Score = 5
                     }
                 },
                 {
                     1, new Unit
                     {
-                        Id = 1, HpGain= 1, ManaGain =1,
+                        Id = 1, HpGain= 1, ManaGain =20,
                         Name = "Zealot", Race = "Protoss", Score = 5
                     }
                 },
                 {
                     2, new Unit
                     {
-                        Id = 2, HpGain= 1, ManaGain =1,
+                        Id = 2, HpGain= 1, ManaGain =30,
                         Name = "Stalker", Race = "Protoss", Score = 5
                     }
                 },
                 {
                     3, new Unit
                     {
-                        Id = 3, HpGain= 1, ManaGain =1,
+                        Id = 3, HpGain= 1, ManaGain =40,
                         Name = "Adept", Race = "Protoss", Score = 5
                     }
                 },
                 {
                     4, new Unit
                     {
-                        Id = 4, HpGain= 1, ManaGain =1,
+                        Id = 4, HpGain= 1, ManaGain =50,
                         Name = "Sentry", Race = "Protoss", Score = 5
                     }
                 },
                 {
                     5, new Unit
                     {
-                        Id = 5, HpGain= 1, ManaGain =1,
+                        Id = 5, HpGain= 1, ManaGain =60,
                         Name = "Immortal", Race = "Protoss", Score = 5
                     }
                 },
                 {
                     6, new Unit
                     {
-                        Id = 6, HpGain= 1, ManaGain =1,
+                        Id = 6, HpGain= 1, ManaGain =70,
                         Name = "Warp Prism", Race = "Protoss", Score = 5
                     }
                 },
                 {
                     7, new Unit
                     {
-                        Id = 7, HpGain= 1, ManaGain =1,
+                        Id = 7, HpGain= 1, ManaGain =80,
                         Name = "Observer", Race = "Protoss", Score = 5
                     }
                 }

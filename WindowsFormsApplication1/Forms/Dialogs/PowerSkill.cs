@@ -13,9 +13,11 @@ namespace WindowsFormsApplication1
         }
         public static int Show(Form A,int x,int y)
         {
-            PowerSkill form = new PowerSkill();
-            form.StartPosition = FormStartPosition.Manual;
-            form.Location = new Point(A.Location.X + x + 10, A.Location.Y + y - 230);
+            PowerSkill form = new PowerSkill
+            {
+                StartPosition = FormStartPosition.Manual,
+                Location = new Point(A.Location.X + x + 10, A.Location.Y + y - 230)
+            };
             form.ShowDialog();
             if (form.DialogResult == DialogResult.Yes)
                 return result;

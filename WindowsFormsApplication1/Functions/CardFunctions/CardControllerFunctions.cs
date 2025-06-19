@@ -35,7 +35,7 @@ namespace WindowsFormsApplication1.Functions.CardFunctions
                     Id= i,
                     Size = cardSize,
                     Image = image,
-                    State = Enums.MatchingState.None,
+                    State = MatchingState.None,
                     StateDuration = 0,
                     Visible = false,
                     Enabled = false
@@ -98,6 +98,18 @@ namespace WindowsFormsApplication1.Functions.CardFunctions
             card.FlatAppearance.BorderColor = Color.Green;
             card.FlatAppearance.BorderSize = 1;
             card.State = MatchingState.Selected;
+        }
+
+        public static (MatchingCard, MatchingCard) GetInstantPair(MatchingCard[] cards, MatchingCard firstSelectedCard = null)
+        {
+            var randomIndex = new Random().Next(cards.Length - 1);
+            var firstCard = firstSelectedCard ?? cards.ElementAtOrDefault(randomIndex);
+            var secondCard = cards.FirstOrDefault(card =>
+                card.UnitType == firstCard.UnitType &&
+                card != firstCard
+            );
+
+            return (firstCard, secondCard);
         }
 
         //TODO: update calculation logic to set cards in a rectangle pattern
