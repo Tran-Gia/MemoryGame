@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\Backgrounds.cs" />
+    <Compile Include="Constants\DefaultValues.cs" />
     <Compile Include="Enums\CardsPattern.cs" />
     <Compile Include="Enums\FactionType.cs" />
     <Compile Include="Enums\MatchingState.cs" />
@@ -98,9 +99,10 @@
     </Compile>
     <Compile Include="Functions\CardFunctions\CardControllerFunctions.cs" />
     <Compile Include="Functions\GlobalFunctions\AwaitWithConditions.cs" />
+    <Compile Include="Functions\GlobalFunctions\StringHelper.cs" />
     <Compile Include="Functions\Units\UnitDictionary.cs" />
     <Compile Include="Functions\UserSettings\UserResolution.cs" />
-    <Compile Include="Functions\UserSettings\UserSettingExtension.cs" />
+    <Compile Include="Functions\UserSettings\UserSettingHelper.cs" />
     <Compile Include="Functions\UserSettings\UserSetting.cs" />
     <Compile Include="Models\Controllers\CardController.cs" />
     <Compile Include="Models\Units\Unit.cs" />
@@ -109,11 +111,6 @@
     </Compile>
     <Compile Include="Forms\Dialogs\PowerSkill.Designer.cs">
       <DependentUpon>PowerSkill.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Forms\Panels\ProtossPanel.cs">
       <SubType>Form</SubType>
@@ -156,6 +153,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -168,6 +170,7 @@
   <ItemGroup>
     <Content Include="Resources\Audio\0P.wav" />
     <Content Include="favicon.ico" />
+    <None Include="Resources\Images\Avatars\Fenix.gif" />
     <None Include="Resources\Images\Backgrounds\LoadingScreen_Protoss.jpg" />
     <EmbeddedResource Include="Resources\Audio\ArtanisBGM.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

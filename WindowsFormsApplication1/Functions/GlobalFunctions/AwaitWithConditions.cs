@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using WindowsFormsApplication1.Constants;
 
 namespace WindowsFormsApplication1.Functions.GlobalFunctions
 {
@@ -15,8 +16,8 @@ namespace WindowsFormsApplication1.Functions.GlobalFunctions
                 {
                     throw new TimeoutException("Condition was not met within the specified timeout.");
                 }
-                await Task.Delay(100);
-                time += 100;
+                await Task.Delay(DefaultValues.TimerInterval);
+                time += DefaultValues.TimerInterval;
             }
         }
 
@@ -26,13 +27,13 @@ namespace WindowsFormsApplication1.Functions.GlobalFunctions
             var accumulativeTime = 0;
             while (time < awaitTime)
             {
-                await Task.Delay(100);
+                await Task.Delay(DefaultValues.TimerInterval);
                 if(!condition())
                 {
-                    time += 100;
+                    time += DefaultValues.TimerInterval;
                 }
 
-                accumulativeTime += 100;
+                accumulativeTime += DefaultValues.TimerInterval;
                 if (accumulativeTime >= MAX_TIMEOUT && !allowInfiniteTimeout)
                 {
                     throw new TimeoutException("Condition has been true for a very long time.");

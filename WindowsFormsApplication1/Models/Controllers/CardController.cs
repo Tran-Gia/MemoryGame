@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsApplication1.Constants;
 using WindowsFormsApplication1.Enums;
 using WindowsFormsApplication1.Forms.Buttons;
 using WindowsFormsApplication1.Functions.CardFunctions;
@@ -16,7 +17,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
     public class CardController
     {
         private const int MAX_TYPE = 7;
-        private const double TIMER_INTERVAL = 0.1;
+        private const int TIMER_INTERVAL = DefaultValues.TimerInterval;
         private const double INFINITE_DURATION = 1000;
 
         private readonly ControlCollection _controls;
@@ -30,14 +31,14 @@ namespace WindowsFormsApplication1.Functions.Controllers
         private MatchingCard _firstSelectedCard;
         private MatchingCard _secondSelectedCard;
         private int _score = 0;
-        private int _combo = 1;
+        private int _combo = 0;
         private int _baseScore = 5;
         private int _totalTypes = 5;
         private double _remainingTime;
+
         public bool GameIsInProgress { get; private set; } = false;
         public bool GameIsPaused { get; private set; } = false;
         public bool GameOver { get; private set; } = false;
-
         public int Level { get; set; } = 0;
         public int LevelTime { get; set; } = 20;
 
@@ -48,7 +49,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
             _defaultImage = defaultImage ?? _defaultImage;
             _controls = form.Controls;
             _form = form;
-            _controllerTimer.Interval = (int)(TIMER_INTERVAL * 1000);
+            _controllerTimer.Interval = TIMER_INTERVAL;
             _controllerTimer.Tick += ControllerTimer_Tick;
         }
 
@@ -186,8 +187,8 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
         public void RoundRestart()
         {
-            //Combo = 1;
-            //reduce score here ?
+            _combo = 0;
+            _score /= 2;
 
             GameIsInProgress = false;
             GameIsPaused = false;
@@ -250,10 +251,10 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
             if (!isPair)
             {
-                _combo = 1;
+                _combo = 0;
                 if (_score >= 12)
                     _score -= 2;
-                _form.DisplayScoreCombo(_score, _combo);
+                _form.DisplayScoreCombo();
 
                 _firstSelectedCard = _secondSelectedCard = null;
                 return;
@@ -261,17 +262,14 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
             _score += _firstSelectedCard.UnitType.Score + _baseScore * _combo;
             _combo++;
+            _form.UpdateManaProgressBar((int)_firstSelectedCard.UnitType.ManaGain);
+            _form.DisplayScoreCombo();
 
             _controls.Remove(_firstSelectedCard);
             _firstSelectedCard.Dispose();
             _controls.Remove(_secondSelectedCard);
             _secondSelectedCard.Dispose();
-            _form.DisplayScoreCombo(_score, _combo);
 
-            _form.UpdateManaProgressBar((int)_firstSelectedCard.UnitType.ManaGain);
-            //manaProgressBar.Step = 10 + 3 * Combo;
-            //manaProgressBar.PerformStep();
-            //toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
 
             _firstSelectedCard = _secondSelectedCard = null;
             _cards = _cards
@@ -286,7 +284,6 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
         private void RoundEnd(bool isWon)
         {
-            _form.DisplayScoreCombo(_score, _combo);
             GameIsInProgress = false;
 
             if (isWon)
@@ -330,7 +327,9 @@ namespace WindowsFormsApplication1.Functions.Controllers
                 _remainingTime / 2 * (Level / 4) + 
                 _remainingTime * (Level / 10));
             _score += bonusScore;
-            _form.DisplayScoreCombo(_score, 1);
+
+            _combo = 0;
+            _form.DisplayScoreCombo();
 
             if (Level < 40)
                 Level++;
@@ -351,6 +350,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
             var nextUnit = unitDictionary.GetUnit(_totalTypes-1);
             var advance = NextLevelRevealDialog.NextLevelDetails
             (
+                _form,
                 _score,
                 timeSpent,
                 bonusScore,
@@ -378,7 +378,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
             if (GameIsInProgress)
             {
-                _remainingTime -= TIMER_INTERVAL;
+                _remainingTime -= (double)TIMER_INTERVAL / 1000;
                 //prevents Race Condition: pairing last correct cards but timer runs out first
                 if (_remainingTime <= 0 && _secondSelectedCard == null)
                 {
@@ -394,7 +394,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
             {
                 if (card.StateDuration > 0 &&
                     card.StateDuration < INFINITE_DURATION)
-                    card.StateDuration -= TIMER_INTERVAL;
+                    card.StateDuration -= (double)TIMER_INTERVAL / 1000;
 
                 if (card.StateDuration <= 0 &&
                     card.State != MatchingState.None &&

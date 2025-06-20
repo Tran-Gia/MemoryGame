@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
+using WindowsFormsApplication1.Constants;
 using WindowsFormsApplication1.Enums;
 using WindowsFormsApplication1.Functions.Controllers;
+using WindowsFormsApplication1.Functions.GlobalFunctions;
 using WindowsFormsApplication1.Functions.UserSettings;
 
 namespace WindowsFormsApplication1
@@ -12,14 +15,12 @@ namespace WindowsFormsApplication1
     //BGM is shitty with Uri, check for solution
     public partial class ProtossPanel : Form
     {
-        #region properties
-        bool MusicPlaying = false;
         bool ExitGame = true;
-        int preMana = 0;
+        int preroundMana = 0;
         readonly ToolTip toolTip1;
         readonly MediaPlayer BGMPlayer;
         private CardController _controller;
-        #endregion
+
         public ProtossPanel()
         {
             Shown += ProtossPanel_Shown;
@@ -32,11 +33,13 @@ namespace WindowsFormsApplication1
                 ShowAlways = true
             };
             toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
-            BackgroundImage = Constants.Backgrounds.ProtossBackground;
+            BackgroundImage = Backgrounds.ProtossBackground;
             BackgroundImageLayout = ImageLayout.Stretch; //TODO: update this
-            UserSettingExtension.SetResolution(this);
+            UserSettingHelper.SetResolution(this);
             manaProgressBar.Minimum = 0;
             manaProgressBar.Maximum = 1000;
+
+            progressBar1.Minimum = 0;
         }
 
         private void ProtossPanel_Shown(object sender, EventArgs e)
@@ -44,62 +47,78 @@ namespace WindowsFormsApplication1
             Application.DoEvents();
             Opacity = 100;
             _controller = new CardController(this, new Size(100, 100),null, 14);
-            Timer1.Interval = 100;
+            Timer1.Interval = DefaultValues.TimerInterval;
             _controller.CreateCards();
+            BGMStart();
         }
 
         #region Game Systems
-        public void DisplayScoreCombo(int Score, int Combo)
+        public void DisplayScoreCombo()
         {
-            if (Score < 10)
-                PlayerScorelbl.Text = "000" + Score.ToString();
-            else if (Score < 100)
-                PlayerScorelbl.Text = "00" + Score.ToString();
-            else if (Score < 1000)
-                PlayerScorelbl.Text = "0" + Score.ToString();
-            else
-                PlayerScorelbl.Text = Score.ToString();
-            if (Combo < 10)
-                Combolbl.Text = " " + Combo.ToString() + "X";
-            else
-                Combolbl.Text = Combo.ToString() + "X";
+            var score = StringHelper.PrependZero
+            (
+                _controller.GetScore(),
+                DefaultValues.ScoreDigits
+            );
+
+            var combo = StringHelper.PrependZero
+            (
+                _controller.GetCombo(),
+                DefaultValues.ComboDigits
+            );
+
+            PlayerScorelbl.Text = score;
+            Combolbl.Text = $"{combo}X";
+        }
+
+        public void UpdateManaProgressBar(int value)
+        {
+            manaProgressBar.Value = 
+                manaProgressBar.Value + value > manaProgressBar.Maximum ?
+                manaProgressBar.Maximum :
+                manaProgressBar.Value + value;
+
+            toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
         }
 
         public void RoundCleanup()
         {
-            Timer1.Stop();
+            SetGameTimerStatus(false);
             PowerUpBtn.Enabled = false;
             GameStartBtn.Text = "START";
             GameStartBtn.Enabled = true;
+            foreach (var f in Application.OpenForms.OfType<PowerSkill>().ToList())
+            {
+                f.Close();
+            }
         }
 
         public void LevelAdvance()
         {
-            preMana = manaProgressBar.Value;
-            progressBar1.Value = 1;
+            preroundMana = manaProgressBar.Value;
+            progressBar1.Value = 0;
             TimeLabel.Text = "00:00";
 
             _controller.CreateCards();
             ActiveForm.Text = "Level " + _controller.Level;
         }
 
-        public void UpdateManaProgressBar(int value)
+        public void GameOver()
         {
-            if (manaProgressBar.Value + value > manaProgressBar.Maximum)
-                manaProgressBar.Value = manaProgressBar.Maximum;
-            else
-                manaProgressBar.Value += value;
-
-            toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
+            GameStartBtn.Text = "REPLAY";
+            PowerUpBtn.Enabled = false;
+            foreach (var f in Application.OpenForms.OfType<PowerSkill>().ToList())
+            {
+                f.Close();
+            }
         }
         #endregion
 
         #region Sound Setting
         public void BGMStart()
         {
-            if (UserSetting.MusicEnabled && !MusicPlaying)
+            if (UserSetting.MusicEnabled)
             {
-                MusicPlaying = true;
                 if(BGMPlayer.Source == null)
                     BGMPlayer.Open(new Uri("Resources/Audio/ArtanisBGM.wav", UriKind.Relative));
                 BGMPlayer.Play();
@@ -109,11 +128,9 @@ namespace WindowsFormsApplication1
         public void BGMStop()
         {
             BGMPlayer.Pause();
-            MusicPlaying = false;
         }
         private void BGMPlayer_MediaEnded(object sender, EventArgs e)
         {
-            MusicPlaying = false;
             BGMStart();
         }
 
@@ -133,11 +150,10 @@ namespace WindowsFormsApplication1
             if (_controller.GameIsPaused || !_controller.GameIsInProgress)
                 return;
 
-            manaProgressBar.Step = 10;
+            manaProgressBar.Step = 5;
             manaProgressBar.PerformStep();
             toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
 
-            progressBar1.Minimum = 1;
             progressBar1.Maximum = _controller.LevelTime * 10;
             progressBar1.Step = 1;
             progressBar1.PerformStep();
@@ -159,9 +175,12 @@ namespace WindowsFormsApplication1
             {
                 SetGameTimerStatus(true);
                 GameStartBtn.Enabled = false;
-                BGMStart();
                 _controller.DisplayCards();
-                await Task.Delay(500);
+
+                await AwaitWithConditions
+                    .AdditionalTimeoutWhileTrue(() =>
+                    _controller.GameIsPaused, 500);
+
                 await _controller.RoundStart();
                 GameStartBtn.Text = "REPLAY";
                 PowerUpBtn.Enabled = true;
@@ -169,8 +188,8 @@ namespace WindowsFormsApplication1
             }
             else
             {
-                progressBar1.Value = 1;
-                manaProgressBar.Step = preMana - manaProgressBar.Value;
+                progressBar1.Value = 0;
+                manaProgressBar.Step = preroundMana - manaProgressBar.Value;
                 manaProgressBar.PerformStep();
                 toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
                 PowerUpBtn.Enabled = false;
@@ -191,7 +210,7 @@ namespace WindowsFormsApplication1
             switch (result)
             {
                 case 1:
-                    if (UserSetting.MusicEnabled && _controller.GameIsInProgress)
+                    if (UserSetting.MusicEnabled)
                     {
                         BGMStart();
                         break;
@@ -225,7 +244,7 @@ namespace WindowsFormsApplication1
 
             if (menuIsDismissed)
             {
-                UserSettingExtension.SetResolution(this);
+                UserSettingHelper.SetResolution(this);
                 _controller.ResumeGame();
                 SetGameTimerStatus(true);
 
@@ -282,12 +301,5 @@ namespace WindowsFormsApplication1
             }
         }
         #endregion
-        public void GameOver()
-        {
-            progressBar1.Value = 1;
-            GameStartBtn.Text = "REPLAY";
-            PowerUpBtn.Enabled = false;
-        }
-
     }
 }

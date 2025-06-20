@@ -82,9 +82,9 @@ namespace WindowsFormsApplication1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap LoadingScreen_Protoss {
+        internal static System.Drawing.Bitmap Fenix {
             get {
-                object obj = ResourceManager.GetObject("LoadingScreen_Protoss", resourceCulture);
+                object obj = ResourceManager.GetObject("Fenix", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

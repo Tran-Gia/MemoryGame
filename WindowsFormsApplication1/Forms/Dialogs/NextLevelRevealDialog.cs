@@ -10,7 +10,7 @@ namespace WindowsFormsApplication1
         {
             InitializeComponent();
         }
-        public static bool NextLevelDetails(int score,int timeSpent, int bonusScore,int levelTime,int baseScore, int cardsAmount,string nextUnit, Image nextUnitImage)
+        public static bool NextLevelDetails(Form owner, int score,int timeSpent, int bonusScore,int levelTime,int baseScore, int cardsAmount,string nextUnit, Image nextUnitImage)
         {
             //TODO: A bug is occurred where the PowerSkill dialog is present when the round is won, so this dialog will appear on top of it.
             NextLevelRevealDialog form = new NextLevelRevealDialog
@@ -29,7 +29,7 @@ namespace WindowsFormsApplication1
                 $"\nNew Unit: {nextUnit}" +
                 "\nAdditional effects: Not available in this version";
 
-            form.ShowDialog();
+            form.ShowDialog(owner);
             return form.DialogResult == DialogResult.Yes;
         }
 
