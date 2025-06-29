@@ -51,6 +51,9 @@
   <PropertyGroup>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -68,7 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\Backgrounds.cs" />
+    <Compile Include="Constants\AudioUri.cs" />
     <Compile Include="Constants\DefaultValues.cs" />
+    <Compile Include="Enums\Ability.cs" />
     <Compile Include="Enums\CardsPattern.cs" />
     <Compile Include="Enums\FactionType.cs" />
     <Compile Include="Enums\MatchingState.cs" />
@@ -100,17 +105,18 @@
     <Compile Include="Functions\CardFunctions\CardControllerFunctions.cs" />
     <Compile Include="Functions\GlobalFunctions\AwaitWithConditions.cs" />
     <Compile Include="Functions\GlobalFunctions\StringHelper.cs" />
+    <Compile Include="Functions\ProgressBarFunctions\ProgressBarExtensions.cs" />
     <Compile Include="Functions\Units\UnitDictionary.cs" />
     <Compile Include="Functions\UserSettings\UserResolution.cs" />
     <Compile Include="Functions\UserSettings\UserSettingHelper.cs" />
     <Compile Include="Functions\UserSettings\UserSetting.cs" />
     <Compile Include="Models\Controllers\CardController.cs" />
     <Compile Include="Models\Units\Unit.cs" />
-    <Compile Include="Forms\Dialogs\PowerSkill.cs">
+    <Compile Include="Forms\Dialogs\AbilitiesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Dialogs\PowerSkill.Designer.cs">
-      <DependentUpon>PowerSkill.cs</DependentUpon>
+    <Compile Include="Forms\Dialogs\AbilitiesDialog.Designer.cs">
+      <DependentUpon>AbilitiesDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Panels\ProtossPanel.cs">
       <SubType>Form</SubType>
@@ -135,8 +141,8 @@
     <EmbeddedResource Include="Forms\Dialogs\NextLevelRevealDialog.resx">
       <DependentUpon>NextLevelRevealDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Dialogs\PowerSkill.resx">
-      <DependentUpon>PowerSkill.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Dialogs\AbilitiesDialog.resx">
+      <DependentUpon>AbilitiesDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -170,9 +176,11 @@
   <ItemGroup>
     <Content Include="Resources\Audio\0P.wav" />
     <Content Include="favicon.ico" />
+    <Content Include="Resources\Images\Backgrounds\MainScreen.jpg" />
+    <None Include="Resources\Audio\NotEnoughEnergy.wav" />
     <None Include="Resources\Images\Avatars\Fenix.gif" />
     <None Include="Resources\Images\Backgrounds\LoadingScreen_Protoss.jpg" />
-    <EmbeddedResource Include="Resources\Audio\ArtanisBGM.wav">
+    <EmbeddedResource Include="Resources\Audio\Protoss\ArtanisBGM.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <Content Include="Resources\Audio\StartSound.wav">

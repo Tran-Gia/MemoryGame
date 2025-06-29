@@ -61,16 +61,6 @@ namespace WindowsFormsApplication1.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap BackgroundImage {
-            get {
-                object obj = ResourceManager.GetObject("BackgroundImage", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
         internal static System.IO.UnmanagedMemoryStream BGM_Protoss {
@@ -86,6 +76,25 @@ namespace WindowsFormsApplication1.Properties {
             get {
                 object obj = ResourceManager.GetObject("Fenix", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MainScreen {
+            get {
+                object obj = ResourceManager.GetObject("MainScreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream NotEnoughEnergy {
+            get {
+                return ResourceManager.GetStream("NotEnoughEnergy", resourceCulture);
             }
         }
         

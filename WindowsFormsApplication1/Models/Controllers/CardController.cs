@@ -16,7 +16,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
 {
     public class CardController
     {
-        private const int MAX_TYPE = 7;
+        private const int MAX_TYPE = 19;
         private const int TIMER_INTERVAL = DefaultValues.TimerInterval;
         private const double INFINITE_DURATION = 1000;
 
@@ -32,6 +32,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
         private MatchingCard _secondSelectedCard;
         private int _score = 0;
         private int _combo = 0;
+        private int _highestCombo = 0;
         private int _baseScore = 5;
         private int _totalTypes = 5;
         private double _remainingTime;
@@ -42,19 +43,19 @@ namespace WindowsFormsApplication1.Functions.Controllers
         public int Level { get; set; } = 0;
         public int LevelTime { get; set; } = 20;
 
-        public CardController(ProtossPanel form, Size? cardSize, Image defaultImage = null, int amount = 0)
+        public CardController(
+            ProtossPanel form,
+            Size? cardSize = null,
+            Image defaultImage = null,
+            int amount = 0)
         {
             _amount = amount;
             _cardSize = cardSize != null ? (Size)cardSize : _cardSize;
             _defaultImage = defaultImage ?? _defaultImage;
-            _controls = form.Controls;
             _form = form;
+            _controls = _form.Controls;
             _controllerTimer.Interval = TIMER_INTERVAL;
             _controllerTimer.Tick += ControllerTimer_Tick;
-        }
-
-        public CardController()
-        {
         }
 
         public CardController SetAmount(int amount)
@@ -189,6 +190,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
         {
             _combo = 0;
             _score /= 2;
+            _form.DisplayScoreCombo();
 
             GameIsInProgress = false;
             GameIsPaused = false;
@@ -262,14 +264,15 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
             _score += _firstSelectedCard.UnitType.Score + _baseScore * _combo;
             _combo++;
-            _form.UpdateManaProgressBar((int)_firstSelectedCard.UnitType.ManaGain);
+            _highestCombo = Math.Max(_highestCombo, _combo);
+
+            _form.UpdateEnergyProgressBar((int)_firstSelectedCard.UnitType.ManaGain);
             _form.DisplayScoreCombo();
 
             _controls.Remove(_firstSelectedCard);
             _firstSelectedCard.Dispose();
             _controls.Remove(_secondSelectedCard);
             _secondSelectedCard.Dispose();
-
 
             _firstSelectedCard = _secondSelectedCard = null;
             _cards = _cards
@@ -292,6 +295,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
                 return;
             }
 
+            _form.SetTimerToZero();
             GameOver = true;
             foreach (var card in _cards)
             {
@@ -326,8 +330,8 @@ namespace WindowsFormsApplication1.Functions.Controllers
                 _remainingTime / 4 * (Level / 2) +
                 _remainingTime / 2 * (Level / 4) + 
                 _remainingTime * (Level / 10));
-            _score += bonusScore;
 
+            _score += bonusScore;
             _combo = 0;
             _form.DisplayScoreCombo();
 
@@ -352,8 +356,9 @@ namespace WindowsFormsApplication1.Functions.Controllers
             (
                 _form,
                 _score,
-                timeSpent,
                 bonusScore,
+                _highestCombo,
+                timeSpent,
                 (int) _remainingTime,
                 _baseScore,
                 _amount,

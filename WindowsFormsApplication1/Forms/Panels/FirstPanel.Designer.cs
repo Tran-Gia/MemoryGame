@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FirstPanel));
             this.Welcome2 = new System.Windows.Forms.Label();
             this.StartBtn = new System.Windows.Forms.Button();
             this.InsBtn = new System.Windows.Forms.Button();
@@ -50,7 +51,7 @@
             this.Welcome2.BackColor = System.Drawing.Color.Transparent;
             this.Welcome2.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Welcome2.ForeColor = System.Drawing.Color.Lime;
-            this.Welcome2.Location = new System.Drawing.Point(280, 85);
+            this.Welcome2.Location = new System.Drawing.Point(287, 137);
             this.Welcome2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.Welcome2.Name = "Welcome2";
             this.Welcome2.Size = new System.Drawing.Size(666, 91);
@@ -64,8 +65,8 @@
             this.StartBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.StartBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.StartBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StartBtn.Location = new System.Drawing.Point(436, 203);
-            this.StartBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.StartBtn.Location = new System.Drawing.Point(436, 384);
+            this.StartBtn.Margin = new System.Windows.Forms.Padding(4);
             this.StartBtn.Name = "StartBtn";
             this.StartBtn.Size = new System.Drawing.Size(389, 76);
             this.StartBtn.TabIndex = 3;
@@ -80,8 +81,8 @@
             this.InsBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.InsBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.InsBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.InsBtn.Location = new System.Drawing.Point(436, 327);
-            this.InsBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InsBtn.Location = new System.Drawing.Point(436, 478);
+            this.InsBtn.Margin = new System.Windows.Forms.Padding(4);
             this.InsBtn.Name = "InsBtn";
             this.InsBtn.Size = new System.Drawing.Size(389, 76);
             this.InsBtn.TabIndex = 4;
@@ -97,8 +98,8 @@
             this.ExitBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.ExitBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ExitBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ExitBtn.Location = new System.Drawing.Point(436, 443);
-            this.ExitBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ExitBtn.Location = new System.Drawing.Point(436, 588);
+            this.ExitBtn.Margin = new System.Windows.Forms.Padding(4);
             this.ExitBtn.Name = "ExitBtn";
             this.ExitBtn.Size = new System.Drawing.Size(389, 76);
             this.ExitBtn.TabIndex = 5;
@@ -117,7 +118,7 @@
             this.Welcome1.BackColor = System.Drawing.Color.Transparent;
             this.Welcome1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Welcome1.ForeColor = System.Drawing.Color.Yellow;
-            this.Welcome1.Location = new System.Drawing.Point(411, 25);
+            this.Welcome1.Location = new System.Drawing.Point(411, 9);
             this.Welcome1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.Welcome1.Name = "Welcome1";
             this.Welcome1.Size = new System.Drawing.Size(414, 39);
@@ -127,16 +128,17 @@
             // 
             // Credit
             // 
+            this.Credit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Credit.AutoSize = true;
             this.Credit.BackColor = System.Drawing.Color.Transparent;
             this.Credit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Credit.ForeColor = System.Drawing.Color.DarkGray;
-            this.Credit.Location = new System.Drawing.Point(524, 567);
+            this.Credit.Location = new System.Drawing.Point(959, 639);
             this.Credit.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.Credit.Name = "Credit";
-            this.Credit.Size = new System.Drawing.Size(637, 25);
+            this.Credit.Size = new System.Drawing.Size(290, 25);
             this.Credit.TabIndex = 7;
-            this.Credit.Text = "A RoyalDragon12 Production, In Association With Luong Gia Bao";
+            this.Credit.Text = "A RoyalDragon12 Production";
             // 
             // ChooseModeLabel
             // 
@@ -144,20 +146,20 @@
             this.ChooseModeLabel.BackColor = System.Drawing.Color.Transparent;
             this.ChooseModeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ChooseModeLabel.ForeColor = System.Drawing.Color.Lime;
-            this.ChooseModeLabel.Location = new System.Drawing.Point(329, 11);
+            this.ChooseModeLabel.Location = new System.Drawing.Point(334, 137);
             this.ChooseModeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ChooseModeLabel.Name = "ChooseModeLabel";
             this.ChooseModeLabel.Size = new System.Drawing.Size(573, 69);
             this.ChooseModeLabel.TabIndex = 8;
-            this.ChooseModeLabel.Text = "CHOOSE A MODE:";
+            this.ChooseModeLabel.Text = "CHOOSE A MODE";
             // 
             // ClassicBtn
             // 
             this.ClassicBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ClassicBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ClassicBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ClassicBtn.Location = new System.Drawing.Point(436, 127);
-            this.ClassicBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ClassicBtn.Location = new System.Drawing.Point(436, 379);
+            this.ClassicBtn.Margin = new System.Windows.Forms.Padding(4);
             this.ClassicBtn.Name = "ClassicBtn";
             this.ClassicBtn.Size = new System.Drawing.Size(389, 81);
             this.ClassicBtn.TabIndex = 9;
@@ -170,8 +172,8 @@
             this.ModeBackBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ModeBackBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ModeBackBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ModeBackBtn.Location = new System.Drawing.Point(436, 466);
-            this.ModeBackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ModeBackBtn.Location = new System.Drawing.Point(436, 583);
+            this.ModeBackBtn.Margin = new System.Windows.Forms.Padding(4);
             this.ModeBackBtn.Name = "ModeBackBtn";
             this.ModeBackBtn.Size = new System.Drawing.Size(389, 81);
             this.ModeBackBtn.TabIndex = 11;
@@ -184,12 +186,12 @@
             this.AiurBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.AiurBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.AiurBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AiurBtn.Location = new System.Drawing.Point(436, 127);
-            this.AiurBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AiurBtn.Location = new System.Drawing.Point(881, 536);
+            this.AiurBtn.Margin = new System.Windows.Forms.Padding(4);
             this.AiurBtn.Name = "AiurBtn";
-            this.AiurBtn.Size = new System.Drawing.Size(389, 81);
+            this.AiurBtn.Size = new System.Drawing.Size(368, 81);
             this.AiurBtn.TabIndex = 12;
-            this.AiurBtn.Text = "For Aiur";
+            this.AiurBtn.Text = "Protoss";
             this.AiurBtn.UseVisualStyleBackColor = true;
             this.AiurBtn.Click += new System.EventHandler(this.AiurBtn_Click);
             // 
@@ -198,8 +200,8 @@
             this.ThemeBackBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ThemeBackBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ThemeBackBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ThemeBackBtn.Location = new System.Drawing.Point(436, 466);
-            this.ThemeBackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ThemeBackBtn.Location = new System.Drawing.Point(436, 583);
+            this.ThemeBackBtn.Margin = new System.Windows.Forms.Padding(4);
             this.ThemeBackBtn.Name = "ThemeBackBtn";
             this.ThemeBackBtn.Size = new System.Drawing.Size(389, 81);
             this.ThemeBackBtn.TabIndex = 13;
@@ -213,20 +215,21 @@
             this.ChooseThemeLabel.BackColor = System.Drawing.Color.Transparent;
             this.ChooseThemeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ChooseThemeLabel.ForeColor = System.Drawing.Color.Lime;
-            this.ChooseThemeLabel.Location = new System.Drawing.Point(329, 11);
+            this.ChooseThemeLabel.Location = new System.Drawing.Point(311, 137);
             this.ChooseThemeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ChooseThemeLabel.Name = "ChooseThemeLabel";
-            this.ChooseThemeLabel.Size = new System.Drawing.Size(604, 69);
+            this.ChooseThemeLabel.Size = new System.Drawing.Size(642, 69);
             this.ChooseThemeLabel.TabIndex = 14;
-            this.ChooseThemeLabel.Text = "CHOOSE A THEME:";
+            this.ChooseThemeLabel.Text = "CHOOSE A FACTION";
             // 
             // FirstPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::WindowsFormsApplication1.Properties.Resources.BackgroundImage;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.BackgroundImage = global::WindowsFormsApplication1.Properties.Resources.MainScreen;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.CancelButton = this.ExitBtn;
-            this.ClientSize = new System.Drawing.Size(1248, 603);
+            this.ClientSize = new System.Drawing.Size(1262, 673);
             this.Controls.Add(this.ChooseThemeLabel);
             this.Controls.Add(this.ThemeBackBtn);
             this.Controls.Add(this.AiurBtn);
@@ -240,12 +243,12 @@
             this.Controls.Add(this.StartBtn);
             this.Controls.Add(this.Welcome2);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "FirstPanel";
-            this.Opacity = 100;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Long Live The Memory Game!";
+            this.Text = "Starcraft Memory Game";
             this.Shown += new System.EventHandler(this.FirstPanel_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();

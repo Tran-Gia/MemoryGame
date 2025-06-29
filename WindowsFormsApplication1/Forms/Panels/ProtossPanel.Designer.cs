@@ -29,58 +29,59 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.Timer1 = new System.Windows.Forms.Timer(this.components);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProtossPanel));
+            this.PanelTimer = new System.Windows.Forms.Timer(this.components);
             this.GameStartBtn = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.RemainingTimeProBar = new System.Windows.Forms.ProgressBar();
             this.TimeLabel = new System.Windows.Forms.Label();
             this.ComboInfoLabel = new System.Windows.Forms.Label();
-            this.ScoreDisplaylbl = new System.Windows.Forms.Label();
-            this.PlayerScorelbl = new System.Windows.Forms.Label();
+            this.ScoreLabel = new System.Windows.Forms.Label();
             this.Combolbl = new System.Windows.Forms.Label();
-            this.PowerUpBtn = new System.Windows.Forms.Button();
+            this.AbilitiesBtn = new System.Windows.Forms.Button();
             this.MenuBtn = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.manaProgressBar = new WindowsFormsApplication1.NewProgressBar();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.AvatarPicBox = new System.Windows.Forms.PictureBox();
+            this.EnergyProBar = new WindowsFormsApplication1.NewProgressBar();
+            ((System.ComponentModel.ISupportInitialize)(this.AvatarPicBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // Timer1
+            // PanelTimer
             // 
-            this.Timer1.Tick += new System.EventHandler(this.Timer1_Tick);
+            this.PanelTimer.Tick += new System.EventHandler(this.PanelTimer_Tick);
             // 
             // GameStartBtn
             // 
-            this.GameStartBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.GameStartBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.GameStartBtn.BackColor = System.Drawing.Color.Navy;
             this.GameStartBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GameStartBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.GameStartBtn.Location = new System.Drawing.Point(843, 171);
+            this.GameStartBtn.Location = new System.Drawing.Point(12, 548);
             this.GameStartBtn.Margin = new System.Windows.Forms.Padding(4);
             this.GameStartBtn.Name = "GameStartBtn";
-            this.GameStartBtn.Size = new System.Drawing.Size(200, 85);
+            this.GameStartBtn.Size = new System.Drawing.Size(206, 108);
             this.GameStartBtn.TabIndex = 0;
             this.GameStartBtn.Text = "START";
             this.GameStartBtn.UseVisualStyleBackColor = false;
             this.GameStartBtn.Click += new System.EventHandler(this.GameStartBtn_Click);
             // 
-            // progressBar1
+            // RemainingTimeProBar
             // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.RemainingTimeProBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.BackColor = System.Drawing.Color.White;
-            this.progressBar1.ForeColor = System.Drawing.Color.Transparent;
-            this.progressBar1.Location = new System.Drawing.Point(204, 508);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(4);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.progressBar1.Size = new System.Drawing.Size(633, 70);
-            this.progressBar1.TabIndex = 4;
+            this.RemainingTimeProBar.BackColor = System.Drawing.Color.White;
+            this.RemainingTimeProBar.ForeColor = System.Drawing.Color.Transparent;
+            this.RemainingTimeProBar.Location = new System.Drawing.Point(226, 508);
+            this.RemainingTimeProBar.Margin = new System.Windows.Forms.Padding(4);
+            this.RemainingTimeProBar.Name = "RemainingTimeProBar";
+            this.RemainingTimeProBar.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.RemainingTimeProBar.Size = new System.Drawing.Size(611, 70);
+            this.RemainingTimeProBar.Step = -1;
+            this.RemainingTimeProBar.TabIndex = 4;
             // 
             // TimeLabel
             // 
             this.TimeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.TimeLabel.BackColor = System.Drawing.Color.Transparent;
+            this.TimeLabel.BackColor = System.Drawing.Color.White;
             this.TimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TimeLabel.ForeColor = System.Drawing.Color.Black;
             this.TimeLabel.Location = new System.Drawing.Point(474, 528);
@@ -93,141 +94,131 @@
             // 
             // ComboInfoLabel
             // 
-            this.ComboInfoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ComboInfoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ComboInfoLabel.AutoSize = true;
             this.ComboInfoLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.ComboInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ComboInfoLabel.ForeColor = System.Drawing.Color.Blue;
-            this.ComboInfoLabel.Location = new System.Drawing.Point(843, 260);
-            this.ComboInfoLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ComboInfoLabel.Location = new System.Drawing.Point(13, 465);
+            this.ComboInfoLabel.Margin = new System.Windows.Forms.Padding(0, 0, 100, 0);
             this.ComboInfoLabel.Name = "ComboInfoLabel";
-            this.ComboInfoLabel.Size = new System.Drawing.Size(187, 36);
+            this.ComboInfoLabel.Size = new System.Drawing.Size(142, 36);
             this.ComboInfoLabel.TabIndex = 6;
-            this.ComboInfoLabel.Text = "Combo:       ";
+            this.ComboInfoLabel.Text = "Combo:  ";
             // 
-            // ScoreDisplaylbl
+            // ScoreLabel
             // 
-            this.ScoreDisplaylbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScoreDisplaylbl.AutoSize = true;
-            this.ScoreDisplaylbl.BackColor = System.Drawing.Color.White;
-            this.ScoreDisplaylbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ScoreDisplaylbl.Location = new System.Drawing.Point(843, 308);
-            this.ScoreDisplaylbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.ScoreDisplaylbl.Name = "ScoreDisplaylbl";
-            this.ScoreDisplaylbl.Size = new System.Drawing.Size(188, 36);
-            this.ScoreDisplaylbl.TabIndex = 8;
-            this.ScoreDisplaylbl.Text = "Score:         ";
-            // 
-            // PlayerScorelbl
-            // 
-            this.PlayerScorelbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.PlayerScorelbl.AutoSize = true;
-            this.PlayerScorelbl.BackColor = System.Drawing.Color.White;
-            this.PlayerScorelbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PlayerScorelbl.Location = new System.Drawing.Point(960, 308);
-            this.PlayerScorelbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.PlayerScorelbl.Name = "PlayerScorelbl";
-            this.PlayerScorelbl.Size = new System.Drawing.Size(83, 36);
-            this.PlayerScorelbl.TabIndex = 9;
-            this.PlayerScorelbl.Text = "0000";
+            this.ScoreLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ScoreLabel.AutoSize = true;
+            this.ScoreLabel.BackColor = System.Drawing.Color.White;
+            this.ScoreLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ScoreLabel.Location = new System.Drawing.Point(13, 508);
+            this.ScoreLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ScoreLabel.Name = "ScoreLabel";
+            this.ScoreLabel.Size = new System.Drawing.Size(206, 36);
+            this.ScoreLabel.TabIndex = 8;
+            this.ScoreLabel.Text = "Score: 00000";
             // 
             // Combolbl
             // 
-            this.Combolbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Combolbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Combolbl.AutoSize = true;
             this.Combolbl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.Combolbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Combolbl.ForeColor = System.Drawing.Color.Red;
-            this.Combolbl.Location = new System.Drawing.Point(990, 260);
-            this.Combolbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.Combolbl.Location = new System.Drawing.Point(145, 465);
+            this.Combolbl.Margin = new System.Windows.Forms.Padding(20, 0, 20, 0);
             this.Combolbl.Name = "Combolbl";
-            this.Combolbl.Size = new System.Drawing.Size(55, 36);
+            this.Combolbl.Size = new System.Drawing.Size(73, 36);
             this.Combolbl.TabIndex = 10;
-            this.Combolbl.Text = "1X";
+            this.Combolbl.Text = "00X";
             // 
-            // PowerUpBtn
+            // AbilitiesBtn
             // 
-            this.PowerUpBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PowerUpBtn.BackColor = System.Drawing.Color.Yellow;
-            this.PowerUpBtn.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.PowerUpBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PowerUpBtn.ForeColor = System.Drawing.Color.Red;
-            this.PowerUpBtn.Location = new System.Drawing.Point(13, 508);
-            this.PowerUpBtn.Margin = new System.Windows.Forms.Padding(4);
-            this.PowerUpBtn.Name = "PowerUpBtn";
-            this.PowerUpBtn.Size = new System.Drawing.Size(183, 148);
-            this.PowerUpBtn.TabIndex = 11;
-            this.PowerUpBtn.Text = "POWER UP";
-            this.PowerUpBtn.UseVisualStyleBackColor = false;
-            this.PowerUpBtn.Click += new System.EventHandler(this.PowerUpBtn_Click);
+            this.AbilitiesBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AbilitiesBtn.BackColor = System.Drawing.Color.Yellow;
+            this.AbilitiesBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.AbilitiesBtn.Enabled = false;
+            this.AbilitiesBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilitiesBtn.ForeColor = System.Drawing.Color.Red;
+            this.AbilitiesBtn.Location = new System.Drawing.Point(845, 371);
+            this.AbilitiesBtn.Margin = new System.Windows.Forms.Padding(4);
+            this.AbilitiesBtn.Name = "AbilitiesBtn";
+            this.AbilitiesBtn.Size = new System.Drawing.Size(200, 77);
+            this.AbilitiesBtn.TabIndex = 11;
+            this.AbilitiesBtn.Text = "ABILITIES";
+            this.AbilitiesBtn.UseVisualStyleBackColor = false;
+            this.AbilitiesBtn.Click += new System.EventHandler(this.PowerUpBtn_Click);
             // 
             // MenuBtn
             // 
-            this.MenuBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.MenuBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.MenuBtn.BackColor = System.Drawing.Color.DimGray;
             this.MenuBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.MenuBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MenuBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.MenuBtn.Location = new System.Drawing.Point(845, 358);
+            this.MenuBtn.Location = new System.Drawing.Point(13, 371);
             this.MenuBtn.Margin = new System.Windows.Forms.Padding(4);
             this.MenuBtn.Name = "MenuBtn";
-            this.MenuBtn.Size = new System.Drawing.Size(200, 90);
+            this.MenuBtn.Size = new System.Drawing.Size(206, 90);
             this.MenuBtn.TabIndex = 12;
             this.MenuBtn.Text = "MENU";
             this.MenuBtn.UseVisualStyleBackColor = false;
             this.MenuBtn.Click += new System.EventHandler(this.MenuBtn_Click);
             // 
-            // pictureBox1
+            // AvatarPicBox
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Image = global::WindowsFormsApplication1.Properties.Resources.Fenix;
-            this.pictureBox1.Location = new System.Drawing.Point(845, 456);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.pictureBox1.MaximumSize = new System.Drawing.Size(200, 200);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(200, 200);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
+            this.AvatarPicBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AvatarPicBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.AvatarPicBox.Image = global::WindowsFormsApplication1.Properties.Resources.Fenix;
+            this.AvatarPicBox.Location = new System.Drawing.Point(845, 456);
+            this.AvatarPicBox.Margin = new System.Windows.Forms.Padding(4);
+            this.AvatarPicBox.MaximumSize = new System.Drawing.Size(200, 200);
+            this.AvatarPicBox.Name = "AvatarPicBox";
+            this.AvatarPicBox.Size = new System.Drawing.Size(200, 200);
+            this.AvatarPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.AvatarPicBox.TabIndex = 1;
+            this.AvatarPicBox.TabStop = false;
             // 
-            // manaProgressBar
+            // EnergyProBar
             // 
-            this.manaProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.EnergyProBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.manaProgressBar.Location = new System.Drawing.Point(204, 586);
-            this.manaProgressBar.Margin = new System.Windows.Forms.Padding(4);
-            this.manaProgressBar.Name = "manaProgressBar";
-            this.manaProgressBar.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.manaProgressBar.Size = new System.Drawing.Size(633, 70);
-            this.manaProgressBar.TabIndex = 13;
+            this.EnergyProBar.Location = new System.Drawing.Point(226, 586);
+            this.EnergyProBar.Margin = new System.Windows.Forms.Padding(4);
+            this.EnergyProBar.Maximum = 1000;
+            this.EnergyProBar.Name = "EnergyProBar";
+            this.EnergyProBar.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.EnergyProBar.Size = new System.Drawing.Size(611, 70);
+            this.EnergyProBar.Step = 5;
+            this.EnergyProBar.TabIndex = 13;
             // 
             // ProtossPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1058, 669);
-            this.Controls.Add(this.GameStartBtn);
             this.Controls.Add(this.Combolbl);
-            this.Controls.Add(this.MenuBtn);
             this.Controls.Add(this.ComboInfoLabel);
-            this.Controls.Add(this.manaProgressBar);
-            this.Controls.Add(this.PlayerScorelbl);
+            this.Controls.Add(this.ScoreLabel);
+            this.Controls.Add(this.GameStartBtn);
+            this.Controls.Add(this.MenuBtn);
+            this.Controls.Add(this.EnergyProBar);
             this.Controls.Add(this.TimeLabel);
-            this.Controls.Add(this.PowerUpBtn);
-            this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.ScoreDisplaylbl);
+            this.Controls.Add(this.AbilitiesBtn);
+            this.Controls.Add(this.RemainingTimeProBar);
+            this.Controls.Add(this.AvatarPicBox);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProtossPanel";
-            this.Opacity = 0D;
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Level 1";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AvatarPicBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,17 +226,16 @@
 
         #endregion
 
-        private WindowsFormsApplication1.NewProgressBar manaProgressBar;
-        private System.Windows.Forms.Timer Timer1;
+        private WindowsFormsApplication1.NewProgressBar EnergyProBar;
+        private System.Windows.Forms.Timer PanelTimer;
         private System.Windows.Forms.Button GameStartBtn;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.PictureBox AvatarPicBox;
+        private System.Windows.Forms.ProgressBar RemainingTimeProBar;
         private System.Windows.Forms.Label TimeLabel;
         private System.Windows.Forms.Label ComboInfoLabel;
-        private System.Windows.Forms.Label ScoreDisplaylbl;
-        private System.Windows.Forms.Label PlayerScorelbl;
+        private System.Windows.Forms.Label ScoreLabel;
         private System.Windows.Forms.Label Combolbl;
-        private System.Windows.Forms.Button PowerUpBtn;
+        private System.Windows.Forms.Button AbilitiesBtn;
         private System.Windows.Forms.Button MenuBtn;
     }
 }

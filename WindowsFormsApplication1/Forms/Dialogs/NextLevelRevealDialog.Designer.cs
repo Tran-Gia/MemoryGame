@@ -66,17 +66,17 @@
             this.ScoreSummaryLabel.Location = new System.Drawing.Point(16, 42);
             this.ScoreSummaryLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ScoreSummaryLabel.Name = "ScoreSummaryLabel";
-            this.ScoreSummaryLabel.Size = new System.Drawing.Size(547, 72);
+            this.ScoreSummaryLabel.Size = new System.Drawing.Size(547, 96);
             this.ScoreSummaryLabel.TabIndex = 2;
             this.ScoreSummaryLabel.Text = "Good job Executor! At this rate, Aiur will be reclaimed in no time!\r\nScore:\r\nTime" +
-    " Spent: ? (+ ? Bonus Score!)";
+    " Spent: ? (+ ? Bonus Score!)\r\nHighest Combo: ?";
             // 
             // NextLevelLabel
             // 
             this.NextLevelLabel.AutoSize = true;
             this.NextLevelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.NextLevelLabel.ForeColor = System.Drawing.Color.DarkOrange;
-            this.NextLevelLabel.Location = new System.Drawing.Point(15, 130);
+            this.NextLevelLabel.Location = new System.Drawing.Point(15, 155);
             this.NextLevelLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.NextLevelLabel.Name = "NextLevelLabel";
             this.NextLevelLabel.Size = new System.Drawing.Size(121, 25);
@@ -87,7 +87,7 @@
             // 
             this.NextLevelDetailsLabel.AutoSize = true;
             this.NextLevelDetailsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NextLevelDetailsLabel.Location = new System.Drawing.Point(16, 168);
+            this.NextLevelDetailsLabel.Location = new System.Drawing.Point(16, 193);
             this.NextLevelDetailsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.NextLevelDetailsLabel.Name = "NextLevelDetailsLabel";
             this.NextLevelDetailsLabel.Size = new System.Drawing.Size(150, 100);

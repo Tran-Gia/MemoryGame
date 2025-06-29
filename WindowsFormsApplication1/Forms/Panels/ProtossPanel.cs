@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -8,17 +10,17 @@ using WindowsFormsApplication1.Constants;
 using WindowsFormsApplication1.Enums;
 using WindowsFormsApplication1.Functions.Controllers;
 using WindowsFormsApplication1.Functions.GlobalFunctions;
+using WindowsFormsApplication1.Functions.ProgressBarFunctions;
 using WindowsFormsApplication1.Functions.UserSettings;
 
 namespace WindowsFormsApplication1
 {
-    //BGM is shitty with Uri, check for solution
     public partial class ProtossPanel : Form
     {
         bool ExitGame = true;
-        int preroundMana = 0;
-        readonly ToolTip toolTip1;
-        readonly MediaPlayer BGMPlayer;
+        int startingRoundEnergy = 0;
+        readonly ToolTip EnergyTooltip;
+        private readonly MediaPlayer _bgmPlayer;
         private CardController _controller;
 
         public ProtossPanel()
@@ -26,29 +28,29 @@ namespace WindowsFormsApplication1
             Shown += ProtossPanel_Shown;
             FormClosed += ProtossPanel_FormClosed;
             InitializeComponent();
-            BGMPlayer = new MediaPlayer();
-            PowerUpBtn.Enabled = false;
-            toolTip1 = new ToolTip
+            _bgmPlayer = new MediaPlayer();
+
+            EnergyTooltip = new ToolTip
             {
                 ShowAlways = true
             };
-            toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
+            EnergyTooltip.SetToolTip(EnergyProBar, EnergyProBar.Value + " / 1000");
+
             BackgroundImage = Backgrounds.ProtossBackground;
             BackgroundImageLayout = ImageLayout.Stretch; //TODO: update this
-            UserSettingHelper.SetResolution(this);
-            manaProgressBar.Minimum = 0;
-            manaProgressBar.Maximum = 1000;
 
-            progressBar1.Minimum = 0;
+            UserSettingHelper.SetResolution(this);
         }
 
         private void ProtossPanel_Shown(object sender, EventArgs e)
         {
             Application.DoEvents();
-            Opacity = 100;
+            PanelTimer.Interval = DefaultValues.TimerInterval;
+
             _controller = new CardController(this, new Size(100, 100),null, 14);
-            Timer1.Interval = DefaultValues.TimerInterval;
             _controller.CreateCards();
+
+            RemainingTimeProBar.SetProgressNoAnimation(RemainingTimeProBar.Maximum);
             BGMStart();
         }
 
@@ -67,27 +69,28 @@ namespace WindowsFormsApplication1
                 DefaultValues.ComboDigits
             );
 
-            PlayerScorelbl.Text = score;
+            ScoreLabel.Text = $"Score: {score}";
             Combolbl.Text = $"{combo}X";
         }
 
-        public void UpdateManaProgressBar(int value)
+        public void UpdateEnergyProgressBar(int value)
         {
-            manaProgressBar.Value = 
-                manaProgressBar.Value + value > manaProgressBar.Maximum ?
-                manaProgressBar.Maximum :
-                manaProgressBar.Value + value;
+            EnergyProBar.Value = 
+                EnergyProBar.Value + value > EnergyProBar.Maximum ?
+                EnergyProBar.Maximum :
+                EnergyProBar.Value + value;
 
-            toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
+            EnergyTooltip.SetToolTip(EnergyProBar, EnergyProBar.Value + " / 1000");
         }
 
         public void RoundCleanup()
         {
             SetGameTimerStatus(false);
-            PowerUpBtn.Enabled = false;
+            AbilitiesBtn.Enabled = false;
             GameStartBtn.Text = "START";
             GameStartBtn.Enabled = true;
-            foreach (var f in Application.OpenForms.OfType<PowerSkill>().ToList())
+
+            foreach (var f in Application.OpenForms.OfType<AbilitiesDialog>().ToList())
             {
                 f.Close();
             }
@@ -95,8 +98,8 @@ namespace WindowsFormsApplication1
 
         public void LevelAdvance()
         {
-            preroundMana = manaProgressBar.Value;
-            progressBar1.Value = 0;
+            startingRoundEnergy = EnergyProBar.Value;
+            RemainingTimeProBar.Value = 0;
             TimeLabel.Text = "00:00";
 
             _controller.CreateCards();
@@ -105,12 +108,35 @@ namespace WindowsFormsApplication1
 
         public void GameOver()
         {
-            GameStartBtn.Text = "REPLAY";
-            PowerUpBtn.Enabled = false;
-            foreach (var f in Application.OpenForms.OfType<PowerSkill>().ToList())
+            GameStartBtn.Text = "RESTART";
+            AbilitiesBtn.Enabled = false;
+            foreach (var f in Application.OpenForms.OfType<AbilitiesDialog>().ToList())
             {
                 f.Close();
             }
+        }
+        public void SetGameTimerStatus(bool isStarted)
+        {
+            if (isStarted)
+            {
+                PanelTimer.Start();
+                return;
+            }
+
+            PanelTimer.Stop();
+        }
+
+        public void SetTimerProBarMaximum(int value)
+        {
+            RemainingTimeProBar.Value =
+                RemainingTimeProBar.Maximum =
+                value * 10;
+        }
+
+        public void SetTimerToZero()
+        {
+            RemainingTimeProBar.Value = 0;
+            TimeLabel.Text = "00:00";
         }
         #endregion
 
@@ -119,53 +145,63 @@ namespace WindowsFormsApplication1
         {
             if (UserSetting.MusicEnabled)
             {
-                if(BGMPlayer.Source == null)
-                    BGMPlayer.Open(new Uri("Resources/Audio/ArtanisBGM.wav", UriKind.Relative));
-                BGMPlayer.Play();
-                BGMPlayer.MediaEnded += BGMPlayer_MediaEnded;
+                if(_bgmPlayer.Source == null)
+                    _bgmPlayer.Open(AudioUri.ProtossBGM);
+                _bgmPlayer.Play();
+                _bgmPlayer.MediaEnded += BGMPlayer_MediaEnded;
             }
         }
         public void BGMStop()
         {
-            BGMPlayer.Pause();
+            _bgmPlayer.Pause();
         }
         private void BGMPlayer_MediaEnded(object sender, EventArgs e)
         {
+            _bgmPlayer.Position = TimeSpan.Zero;
             BGMStart();
         }
-
         #endregion
-        public void SetGameTimerStatus(bool isStarted)
-        {
-            if (isStarted)
-            {
-                Timer1.Start();
-                return;
-            }
 
-            Timer1.Stop();
+        private void AlertSoundNotEnoughEnergy()
+        {
+            try
+            {
+                SoundPlayer sp = new SoundPlayer(
+                    (Stream)Properties.Resources.ResourceManager.GetObject(
+                        "Protoss_NotEnoughEnergy"));
+                sp.Play();
+            }
+            catch
+            {
+                Console.WriteLine("Sound file Energy Alert not found");
+            }
         }
-        private void Timer1_Tick(object sender, EventArgs e)
+
+        private void PanelTimer_Tick(object sender, EventArgs e)
         {
             if (_controller.GameIsPaused || !_controller.GameIsInProgress)
                 return;
 
-            manaProgressBar.Step = 5;
-            manaProgressBar.PerformStep();
-            toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
+            EnergyProBar.PerformStep();
+            EnergyTooltip.SetToolTip(EnergyProBar, EnergyProBar.Value + " / 1000");
 
-            progressBar1.Maximum = _controller.LevelTime * 10;
-            progressBar1.Step = 1;
-            progressBar1.PerformStep();
+            RemainingTimeProBar.PerformStep();
 
             var remainingTime = _controller.GetRemainingTime();
-            var minutesLabel = remainingTime.Minutes < 10 ? $"0{remainingTime.Minutes}" : remainingTime.Minutes.ToString();
-            var secondsRoundup = Math.Ceiling(remainingTime.Seconds + (remainingTime.Milliseconds / 1000.0));
-            var secondsLabel = secondsRoundup < 10 ? $"0{secondsRoundup}" : secondsRoundup.ToString();
+            var minutesLabel = remainingTime.Minutes < 10 ?
+                $"0{remainingTime.Minutes}" :
+                remainingTime.Minutes.ToString();
+
+            var secondsRoundup = Math.Ceiling(
+                remainingTime.Seconds + (remainingTime.Milliseconds / 1000.0));
+            var secondsLabel = secondsRoundup < 10 ?
+                $"0{secondsRoundup}" :
+                secondsRoundup.ToString();
+
             TimeLabel.Text = $"{minutesLabel}:{secondsLabel}";
 
             if(remainingTime.TotalSeconds <= 0)
-                Timer1.Stop();
+                PanelTimer.Stop();
         }
 
         #region Game Buttons
@@ -176,27 +212,26 @@ namespace WindowsFormsApplication1
                 SetGameTimerStatus(true);
                 GameStartBtn.Enabled = false;
                 _controller.DisplayCards();
+                SetTimerProBarMaximum(_controller.LevelTime);
 
                 await AwaitWithConditions
                     .AdditionalTimeoutWhileTrue(() =>
                     _controller.GameIsPaused, 500);
 
                 await _controller.RoundStart();
-                GameStartBtn.Text = "REPLAY";
-                PowerUpBtn.Enabled = true;
+                GameStartBtn.Text = "RESTART";
+                AbilitiesBtn.Enabled = true;
                 GameStartBtn.Enabled = true;
+                return;
             }
-            else
-            {
-                progressBar1.Value = 0;
-                manaProgressBar.Step = preroundMana - manaProgressBar.Value;
-                manaProgressBar.PerformStep();
-                toolTip1.SetToolTip(manaProgressBar, manaProgressBar.Value + " / 1000");
-                PowerUpBtn.Enabled = false;
-                GameStartBtn.Text = "START";
 
-                _controller.RoundRestart();
-            }
+            RemainingTimeProBar.Value = RemainingTimeProBar.Maximum;
+            EnergyProBar.Value = startingRoundEnergy;
+            EnergyTooltip.SetToolTip(EnergyProBar, EnergyProBar.Value + " / 1000");
+            AbilitiesBtn.Enabled = false;
+            GameStartBtn.Text = "START";
+
+            _controller.RoundRestart();
         }
 
         private void MenuBtn_Click(object sender, EventArgs e)
@@ -224,18 +259,15 @@ namespace WindowsFormsApplication1
                     break;
 
                 case 3:
-                    menuIsDismissed = true;
                     ExitGame = false;
-                    BGMPlayer.Stop();
                     Close();
                     FirstPanel FP = new FirstPanel();
                     FP.Show();
-                    break;
+                    return;
 
                 case 4:
-                    menuIsDismissed = true;
                     Application.Exit();
-                    break;
+                    return;
 
                 default:
                     menuIsDismissed = true;
@@ -256,50 +288,51 @@ namespace WindowsFormsApplication1
 
         private async void PowerUpBtn_Click(object sender, EventArgs e)
         {
-            int result = PowerSkill.Show(ActiveForm, PowerUpBtn.Location.X,PowerUpBtn.Location.Y);
+            var result = AbilitiesDialog.Show(this, AbilitiesBtn.Location.X,AbilitiesBtn.Width, AbilitiesBtn.Location.Y, AbilitiesBtn.Height);
 
             if (!_controller.GameIsInProgress || _controller.GameOver)
                 return;
 
             switch (result)
             {
-                case 1:
-                    if(manaProgressBar.Value >= 500)
+                case Ability.SolarPanels:
+                    if(EnergyProBar.Value >= 500)
                     {
-                        manaProgressBar.Step = -500;
-                        manaProgressBar.PerformStep();
+                        EnergyProBar.Value -= 500;
                         _controller.RevealCards(1.5);
                     }
                     else
                     {
-                        MessageBox.Show("You have not enough Energy!", "Error");
+                        AlertSoundNotEnoughEnergy();
                     }
                     break;
-                case 2:
-                    if (manaProgressBar.Value >= 200)
+                case Ability.InstantPair:
+                    if (EnergyProBar.Value >= 200)
                     {
-                        manaProgressBar.Step = -200;
-                        manaProgressBar.PerformStep();
+                        EnergyProBar.Value -= 200;
                         await _controller.InstantPair();
                     }
                     else
                     {
-                        MessageBox.Show("You have not enough Energy!", "Error");
+                        AlertSoundNotEnoughEnergy();
                     }
                     break;
                 default:
                     break;
             }
         }
+        #endregion
+
         private void ProtossPanel_FormClosed(object sender, FormClosedEventArgs e)
         {
-            BGMPlayer.Stop();
+            _bgmPlayer.Stop();
+            _controller = null;
+
             if (ExitGame)
             {
                 MessageBox.Show("Thank you for playing this game!", "Exit Game");
                 Application.Exit();
             }
         }
-        #endregion
     }
 }
