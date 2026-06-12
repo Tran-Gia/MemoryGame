@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApplication1.Enums;
 using WindowsFormsApplication1.Forms.Buttons;
+using WindowsFormsApplication1.Functions.GlobalFunctions;
 using WindowsFormsApplication1.Functions.Units;
 
 namespace WindowsFormsApplication1.Functions.CardFunctions
@@ -15,7 +16,11 @@ namespace WindowsFormsApplication1.Functions.CardFunctions
     internal static class CardControllerFunctions
     {
 
-        public static MatchingCard[] CreateCards(this MatchingCard[] cards, Size cardSize, Image image, int amount)
+        public static MatchingCard[] CreateCards(
+            this MatchingCard[] cards,
+            Size cardSize,
+            Image image,
+            int amount)
         {
             if (cards != null)
             {
@@ -46,7 +51,10 @@ namespace WindowsFormsApplication1.Functions.CardFunctions
         }
 
         //TODO: update old code
-        public static MatchingCard[] SetCardsLocation(this MatchingCard[] cards, int level, CardsPattern pattern = CardsPattern.Rectangle)
+        public static MatchingCard[] SetCardsLocation(
+            this MatchingCard[] cards,
+            int level,
+            CardsPattern pattern = CardsPattern.Rectangle)
         {
             switch (pattern)
             {
@@ -94,13 +102,15 @@ namespace WindowsFormsApplication1.Functions.CardFunctions
 
         public static void SelectOneCard(MatchingCard card)
         {
-            card.Image = (Image)Properties.Resources.ResourceManager.GetObject(card.UnitType.ImagePath);
+            card.Image = ImageHelper.GetImageFromResource(card.UnitType.ImagePath);
             card.FlatAppearance.BorderColor = Color.Green;
             card.FlatAppearance.BorderSize = 1;
             card.State = MatchingState.Selected;
         }
 
-        public static (MatchingCard, MatchingCard) GetInstantPair(MatchingCard[] cards, MatchingCard firstSelectedCard = null)
+        public static (MatchingCard, MatchingCard) GetInstantPair(
+            MatchingCard[] cards,
+            MatchingCard firstSelectedCard = null)
         {
             var randomIndex = new Random().Next(cards.Length - 1);
             var firstCard = firstSelectedCard ?? cards.ElementAtOrDefault(randomIndex);
@@ -118,15 +128,19 @@ namespace WindowsFormsApplication1.Functions.CardFunctions
             var totalRows = Math.DivRem(amount, maxRowLength, out int remaining);
         }
 
-        public static async Task<bool> CheckPairAsync(MatchingCard firstCard, MatchingCard secondCard, Image defaultImage, bool soundOn)
+        public static async Task<bool> CheckPairAsync(
+            MatchingCard firstCard,
+            MatchingCard secondCard,
+            Image defaultImage,
+            bool soundOn)
         {
             await Task.Delay(500);
 
             if (firstCard.UnitType == secondCard.UnitType)
             {
-                //SoundOn = true -> Play, if false -> Mute.
                 if (soundOn)
                     CorrectSound(firstCard);
+
                 await Task.Delay(100);
                 return true;
             }
@@ -146,7 +160,9 @@ namespace WindowsFormsApplication1.Functions.CardFunctions
         {
             try
             {
-                SoundPlayer sp = new SoundPlayer((Stream)Properties.Resources.ResourceManager.GetObject(card.UnitType.AudioPath));
+                SoundPlayer sp = new SoundPlayer(
+                    (Stream)Properties.Resources.ResourceManager
+                    .GetObject(card.UnitType.AudioPath));
                 sp.Play();
             }
             catch

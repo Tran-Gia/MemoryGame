@@ -288,7 +288,12 @@ namespace WindowsFormsApplication1
 
         private async void PowerUpBtn_Click(object sender, EventArgs e)
         {
-            var result = AbilitiesDialog.Show(this, AbilitiesBtn.Location.X,AbilitiesBtn.Width, AbilitiesBtn.Location.Y, AbilitiesBtn.Height);
+            var result = AbilitiesDialog.Show(
+                this,
+                AbilitiesBtn.Location.X,
+                AbilitiesBtn.Width,
+                AbilitiesBtn.Location.Y,
+                AbilitiesBtn.Height);
 
             if (!_controller.GameIsInProgress || _controller.GameOver)
                 return;

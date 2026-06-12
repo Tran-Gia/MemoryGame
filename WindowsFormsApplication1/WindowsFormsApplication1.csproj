@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="Functions\CardFunctions\CardControllerFunctions.cs" />
     <Compile Include="Functions\GlobalFunctions\AwaitWithConditions.cs" />
+    <Compile Include="Functions\GlobalFunctions\ImageHelper.cs" />
     <Compile Include="Functions\GlobalFunctions\StringHelper.cs" />
     <Compile Include="Functions\ProgressBarFunctions\ProgressBarExtensions.cs" />
     <Compile Include="Functions\Units\UnitDictionary.cs" />

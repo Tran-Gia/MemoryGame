@@ -26,7 +26,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
 
         private int _amount = 0;
         private Size _cardSize = new Size(150,150);
-        private Image _defaultImage = (Image)Properties.Resources.ResourceManager.GetObject("Protoss_Image_Default");
+        private Image _defaultImage = ImageHelper.GetImageFromResource("Protoss_Image_Default");
         private MatchingCard[] _cards;
         private MatchingCard _firstSelectedCard;
         private MatchingCard _secondSelectedCard;
@@ -97,7 +97,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
                 card.Enabled = true;
                 if(card.State == MatchingState.Revealed)
                 {
-                    card.Image = (Image)Properties.Resources.ResourceManager.GetObject(card.UnitType.ImagePath);
+                    card.Image = ImageHelper.GetImageFromResource(card.UnitType.ImagePath);
                 }
             }
             GameIsPaused = false;
@@ -152,7 +152,7 @@ namespace WindowsFormsApplication1.Functions.Controllers
             {
                 if (card.State == MatchingState.None || forcedReveal)
                 {
-                    card.Image = (Image)Properties.Resources.ResourceManager.GetObject(card.UnitType.ImagePath);
+                    card.Image = ImageHelper.GetImageFromResource(card.UnitType.ImagePath);
                     card.State = MatchingState.Revealed;
                     card.StateDuration = duration;
                 }
@@ -347,6 +347,8 @@ namespace WindowsFormsApplication1.Functions.Controllers
             if (_totalTypes <= MAX_TYPE)
                 _totalTypes++;
 
+            _totalTypes = _totalTypes <= MAX_TYPE ? _totalTypes++ : -1;
+
             if (LevelTime > 45)
                 LevelTime -= 5;
 
@@ -362,8 +364,8 @@ namespace WindowsFormsApplication1.Functions.Controllers
                 (int) _remainingTime,
                 _baseScore,
                 _amount,
-                nextUnit.Name,
-                (Image)Properties.Resources.ResourceManager.GetObject(nextUnit.ImagePath)
+                nextUnit.Name ?? "No Unit",
+                ImageHelper.GetImageFromResource(nextUnit.ImagePath, _defaultImage)
             );
 
             if (advance)
